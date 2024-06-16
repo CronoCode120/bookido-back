@@ -1,11 +1,8 @@
-class BookRepository {
-  getFilteredBooks = async () => {
-    const url = 'https://openlibrary.org/search.json?publisher=alpha+decay'
-    const res = await fetch(url)
-    const data = await res.json()
+abstract class BookRepository {
+  abstract apiUrl: string
+  abstract resFields: string[]
 
-    return data
-  }
+  abstract getBooksByPublisher(publisher: string): Promise<any>
 }
 
 export default BookRepository
