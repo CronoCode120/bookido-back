@@ -1,6 +1,6 @@
 import express from 'express'
 import BookController from './controllers/BookController.ts'
-import BookRepository from './repositories/BookRepository.ts'
+import BookRepository from './repositories/OpenLibraryBookRepository.ts'
 
 const app = express()
 const port = process.env.PORT ?? 3000
