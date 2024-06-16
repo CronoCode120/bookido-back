@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import BookRepository from '../repositories/BookRepository.ts'
+import BookRepository from '../repositories/OpenLibraryBookRepository.ts'
 
 class BookController {
   readonly repository
@@ -9,7 +9,7 @@ class BookController {
   }
 
   getBooks = async (_req: Request, res: Response) => {
-    const books = await this.repository.getFilteredBooks()
+    const books = await this.repository.getBooksByPublisher()
     res.status(200).json({ books })
   }
 }
