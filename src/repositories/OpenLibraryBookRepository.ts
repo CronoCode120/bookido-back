@@ -1,3 +1,4 @@
+import getEditionData from '../utils/getEditionData.ts'
 import BookRepository from './BookRepository.ts'
 
 class OpenLibraryBookRepository extends BookRepository {
@@ -17,10 +18,11 @@ class OpenLibraryBookRepository extends BookRepository {
     const url = new URL(this.apiUrl)
     url.searchParams.set('publisher', publisher)
     url.searchParams.set('fields', this.resFields.join(','))
+
     const res = await fetch(url)
     const data = await res.json()
 
-    return data
+    return getEditionData(data.docs)
   }
 }
 
