@@ -11,7 +11,8 @@ class OpenLibraryBookRepository extends BookRepository {
     'publisher',
     'subject',
     'language',
-    'publish_date'
+    'publish_date',
+    'isbn'
   ]
 
   getBooksByPublisher = async (publisher: string) => {
