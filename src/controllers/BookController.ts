@@ -9,7 +9,7 @@ class BookController {
   }
 
   getBooks = async (_req: Request, res: Response) => {
-    const books = await this.repository.getBooksByPublisher()
+    const books = await this.repository.getBooksByPublisher('alpha decay')
     res.status(200).json({ books })
   }
 }
