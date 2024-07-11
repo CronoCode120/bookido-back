@@ -1,6 +1,5 @@
 import BookRepository from './BookRepository.ts'
 import getEditionData from '../utils/getEditionData.ts'
-import type { CoverSize } from '../types.d.ts'
 
 class OpenLibraryBookRepository extends BookRepository {
   apiUrl = 'https://openlibrary.org/search.json'
@@ -27,11 +26,11 @@ class OpenLibraryBookRepository extends BookRepository {
     return getEditionData(data.docs)
   }
 
-  getCoverUriByISBN = (isbn: string, size: CoverSize = 'M') => {
-    const coverUrl = 'https://covers.openlibrary.org/b/isbn/'
-    const imgStr = `${isbn}-${size}.jpg`
-    return coverUrl + imgStr
-  }
+  // getCoverURIByISBN = (isbn: string, size: CoverSize = 'M') => {
+  //   const coverUrl = 'https://covers.openlibrary.org/b/isbn/'
+  //   const imgStr = `${isbn}-${size}.jpg`
+  //   return coverUrl + imgStr
+  // }
 }
 
 export default OpenLibraryBookRepository
