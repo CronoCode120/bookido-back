@@ -1,12 +1,17 @@
 const getEditionData = (books: any[]) => {
   const editions = books.flatMap((book: any) => {
     const bookData = {
-      subjects: book.subject
+      subjects: book.subject,
+      author: book.author_name
     }
-    const newData = book.editions.docs.map((edition: any) => ({
-      ...edition,
-      ...bookData
-    }))
+
+    const newData = book.editions.docs.map((edition: any) => {
+      const { author_name, ...editionData } = edition
+      return {
+        ...editionData,
+        ...bookData
+      }
+    })
 
     return newData
   })
