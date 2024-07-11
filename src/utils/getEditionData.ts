@@ -6,10 +6,13 @@ const getEditionData = (books: any[]) => {
     }
 
     const newData = book.editions.docs.map((edition: any) => {
-      const { author_name, ...editionData } = edition
+      const { author_name, isbn, ...editionData } = edition
+      const cover = Array.isArray(isbn) && isbn[0]
       return {
         ...editionData,
-        ...bookData
+        ...bookData,
+        isbn,
+        cover
       }
     })
 
