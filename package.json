@@ -2,7 +2,7 @@
   "name": "bookido-back",
   "version": "1.0.0",
   "description": "Back-end API for Bookido app.",
-  "main": "src/index.ts",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
