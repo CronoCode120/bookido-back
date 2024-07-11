@@ -10,7 +10,7 @@ class OpenLibraryBookRepository extends BookRepository {
     'author_name',
     'publisher',
     'subject',
-    'language',
+    // 'language',
     'publish_date',
     'isbn'
   ]
