@@ -1,5 +1,5 @@
-import BookRepository from './BookRepository.ts'
-import getEditionData from '../utils/getEditionData.ts'
+import BookRepository from './BookRepository.js'
+import getEditionData from '../utils/getEditionData.js'
 
 class OpenLibraryBookRepository extends BookRepository {
   apiUrl = 'https://openlibrary.org/search.json'
