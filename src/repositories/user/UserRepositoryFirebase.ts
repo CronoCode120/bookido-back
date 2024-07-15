@@ -1,7 +1,8 @@
 import { setDoc, doc, Firestore, getFirestore } from 'firebase/firestore'
-import { app } from './firebase.js'
+import { app } from '../firebase.js'
+import UserRepository from './UserRepository.js'
 
-class UserRepositoryFirebase {
+class UserRepositoryFirebase implements UserRepository {
   db: Firestore
   collection = 'users'
 
@@ -9,9 +10,9 @@ class UserRepositoryFirebase {
     this.db = getFirestore(app)
   }
 
-  create = async (id: string, email: string) => {
+  create = async (id: string, email: string, username: string) => {
     const docRef = doc(this.db, this.collection, id)
-    await setDoc(docRef, { id, email })
+    await setDoc(docRef, { id, email, username })
     return id
   }
 }
