@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import BookRepository from '../repositories/OpenLibraryBookRepository.js'
+import BookRepository from '../repositories/book/OpenLibraryBookRepository.js'
 
 class BookController {
   readonly repository
