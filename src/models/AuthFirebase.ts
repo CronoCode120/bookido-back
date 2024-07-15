@@ -1,10 +1,16 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../repositories/firebase.js'
+import { Auth, createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+import { app } from '../repositories/firebase.js'
 
 class AuthFirebase {
-  static createUser = async (email: string, password: string) => {
+  auth: Auth
+
+  constructor() {
+    this.auth = getAuth(app)
+  }
+
+  createUser = async (email: string, password: string) => {
     const userCredential = await createUserWithEmailAndPassword(
-      auth,
+      this.auth,
       email,
       password
     )
