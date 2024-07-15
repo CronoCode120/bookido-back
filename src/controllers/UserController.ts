@@ -1,3 +1,27 @@
-class UserController {}
+import { Request, Response } from 'express'
+import UserRepository from '../repositories/user/UserRepository.js'
+import User from '../models/User.js'
+import AuthUser from '../models/Auth.js'
+
+class UserController {
+  readonly auth
+  readonly repository
+
+  constructor(auth: AuthUser, userRepository: UserRepository) {
+    this.auth = auth
+    this.repository = userRepository
+  }
+
+  signUp = async (req: Request, res: Response) => {
+    const { username, email, password } = req.body
+    const user = User.create({ username, email, password })
+
+    const userId = await this.auth.createUser(user.email, user.password)
+
+    await this.repository.create(userId, user.email, user.username)
+
+    res.status(201).json({ userId })
+  }
+}
 
 export default UserController
