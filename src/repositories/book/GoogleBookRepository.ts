@@ -1,4 +1,4 @@
-import BookRepository from './BookRepository.js'
+import BookRepository from './book/BookRepository.js'
 
 class GoogleBookRepository extends BookRepository {
   apiUrl = 'https://www.googleapis.com/books/v1/volumes'

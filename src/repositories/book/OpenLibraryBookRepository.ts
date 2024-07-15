@@ -1,4 +1,4 @@
-import BookRepository from './BookRepository.js'
+import BookRepository from './book/BookRepository.js'
 import getEditionData from '../utils/getEditionData.js'
 
 class OpenLibraryBookRepository extends BookRepository {
