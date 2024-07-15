@@ -1,7 +1,8 @@
+import AuthUser from './Auth.js'
 import { Auth, createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 import { app } from '../repositories/firebase.js'
 
-class AuthFirebase {
+class AuthFirebase implements AuthUser {
   auth: Auth
 
   constructor() {
@@ -15,7 +16,7 @@ class AuthFirebase {
       password
     )
 
-    return userCredential.user
+    return userCredential.user.uid
   }
 }
 
