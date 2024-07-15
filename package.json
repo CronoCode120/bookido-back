@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "express": "4.19.2",
-    "firebase": "10.12.3"
+    "firebase": "10.12.3",
+    "zod": "3.23.8"
   }
 }
