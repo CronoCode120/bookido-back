@@ -9,7 +9,11 @@ class UserRepositoryFirebase {
     this.db = getFirestore(app)
   }
 
-  create = async (email: string, password: string) => {}
+  create = async (id: string, email: string) => {
+    const docRef = doc(this.db, this.collection, id)
+    await setDoc(docRef, { id, email })
+    return id
+  }
 }
 
 export default UserRepositoryFirebase
