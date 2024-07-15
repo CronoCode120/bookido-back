@@ -3,6 +3,7 @@ import { app } from './firebase.js'
 
 class UserRepositoryFirebase {
   db: Firestore
+  collection = 'users'
 
   constructor() {
     this.db = getFirestore(app)
