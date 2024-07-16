@@ -12,7 +12,7 @@ class UserController {
     this.repository = userRepository
   }
 
-  signUp = async (req: Request, res: Response) => {
+  register = async (req: Request, res: Response) => {
     const { username, email, password } = req.body
     const user = User.create({ username, email, password })
 

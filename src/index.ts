@@ -18,7 +18,7 @@ app.use(express.json())
 
 app.get('/books', bookController.getBooks)
 
-app.post('/users/register', userController.signUp)
+app.post('/users/register', userController.register)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)
