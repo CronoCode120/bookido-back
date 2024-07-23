@@ -22,6 +22,16 @@ class UserController {
 
     res.status(201).json({ userId })
   }
+
+  login = async (req: Request, res: Response) => {
+    const { email, password } = req.body
+    const userId = await this.auth.login(email, password)
+    if (userId != 'err') {
+      res.status(201).json({ userId })
+    } else {
+      res.status(400).json({ error: "Invalid email or password" })
+    }
+  }
 }
 
 export default UserController
