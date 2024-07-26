@@ -6,13 +6,13 @@ class OpenLibraryBookRepository extends BookRepository {
   resFields = [
     'editions',
     'key',
-    'title',
+    'editions.title',
     'author_name',
-    'publisher',
+    'editions.publisher',
     'subject',
     // 'language',
-    'publish_date',
-    'isbn'
+    'editions.publish_date',
+    'editions.isbn'
   ]
 
   getBooksByPublisher = async (publisher: string) => {
@@ -21,6 +21,8 @@ class OpenLibraryBookRepository extends BookRepository {
     url.searchParams.set('fields', this.resFields.join(','))
 
     const res = await fetch(url)
+    console.log(url)
+
     const data = await res.json()
 
     return getEditionData(data.docs)
