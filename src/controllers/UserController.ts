@@ -26,7 +26,7 @@ class UserController {
       if (error instanceof Error) {
         res.status(400).json({ error: error.message })
       } else {
-        res.status(400).json({ error: 'An unknown error occurred' })
+        res.status(500).json({ error: 'An unknown error occurred' })
       }
     }
   }
