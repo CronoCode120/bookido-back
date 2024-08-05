@@ -7,10 +7,12 @@ class GoogleBookRepository extends BookRepository {
     'items/volumeInfo(title,categories,publisher,language)'
   ]
 
-  getBooksByPublisher = async (publisher: string) => {
+  getBooksByPublisher = async (page: string, publisher: string) => {
     const url = new URL(this.apiUrl)
     url.searchParams.set('q', `inpublisher:"${publisher}"`)
     url.searchParams.set('fields', this.resFields.join(','))
+    url.searchParams.set('limit', '20')
+    url.searchParams.set('page', page.toString())
 
     const res = await fetch(url)
     const data = await res.json()
