@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import InvalidParamsError from '../errors/InvalidParams.js'
 
 const userSchema = z.object({
   username: z
@@ -23,7 +24,6 @@ export type UserType = z.infer<typeof userSchema>
 
 export const validateUser = (user: UserType) => {
   const params = userSchema.safeParse(user)
-  if (!params.success) throw new Error(params.error.message)
-
+  if (!params.success) throw new InvalidParamsError(params.error.message)
   return params.data
 }
