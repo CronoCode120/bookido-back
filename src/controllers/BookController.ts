@@ -24,7 +24,7 @@ class BookController {
       throw new InvalidParamsError('"isbn" query must be a string')
 
     const desc = await this.repository.getDescriptionByISBN(isbn)
-    res.status(200).json(desc)
+    res.status(200).json({ description: desc })
   }
 }
 
