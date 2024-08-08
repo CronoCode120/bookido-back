@@ -36,7 +36,11 @@ class OpenLibraryBookRepository extends BookRepository {
     const res = await fetch(url)
     const data = await res.json()
 
-    return data.items[0].volumeInfo.description as string
+    const noDescMsg = 'No hay sinopsis disponible para este título.'
+
+    if (data.items) return data.items[0].volumeInfo?.description ?? noDescMsg
+
+    return noDescMsg
   }
 }
 
