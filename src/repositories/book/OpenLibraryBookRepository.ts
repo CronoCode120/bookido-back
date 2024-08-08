@@ -15,7 +15,7 @@ class OpenLibraryBookRepository extends BookRepository {
     'editions.isbn'
   ]
 
-  getBooksByPublisher = async (page: string, publisher: string) => {
+  getBooksByPublisher = async (page: string = '1', publisher: string) => {
     const url = new URL(this.apiUrl)
     url.searchParams.set('publisher', publisher)
     url.searchParams.set('fields', this.resFields.join(','))
