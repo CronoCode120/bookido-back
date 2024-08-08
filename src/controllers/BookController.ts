@@ -13,8 +13,18 @@ class BookController {
     const { page } = req.query
     if (page && typeof page !== 'string')
       throw new InvalidParamsError('"page" query must be a string')
+
     const books = await this.repository.getBooksByPublisher(page, 'alpha decay')
     res.status(200).json({ books })
+  }
+
+  getDescriptionByISBN = async (req: Request, res: Response) => {
+    const { isbn } = req.query
+    if (typeof isbn !== 'string' || isbn === '')
+      throw new InvalidParamsError('"isbn" query must be a string')
+
+    const desc = await this.repository.getDescriptionByISBN(isbn)
+    res.status(200).json(desc)
   }
 }
 
