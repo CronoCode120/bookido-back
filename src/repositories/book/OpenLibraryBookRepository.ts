@@ -3,6 +3,7 @@ import getEditionData from '../../utils/getEditionData.js'
 
 class OpenLibraryBookRepository extends BookRepository {
   apiUrl = 'https://openlibrary.org/search.json'
+  googleApiUrl = 'https://www.googleapis.com/books/v1/volumes'
   resFields = [
     'editions',
     'key',
@@ -10,7 +11,6 @@ class OpenLibraryBookRepository extends BookRepository {
     'author_name',
     'editions.publisher',
     'subject',
-    // 'language',
     'editions.publish_date',
     'editions.isbn'
   ]
@@ -23,18 +23,21 @@ class OpenLibraryBookRepository extends BookRepository {
     url.searchParams.set('page', page)
 
     const res = await fetch(url)
-    console.log(url)
-
     const data = await res.json()
 
     return getEditionData(data.docs)
   }
 
-  // getCoverURIByISBN = (isbn: string, size: CoverSize = 'M') => {
-  //   const coverUrl = 'https://covers.openlibrary.org/b/isbn/'
-  //   const imgStr = `${isbn}-${size}.jpg`
-  //   return coverUrl + imgStr
-  // }
+  getDescriptionByISBN = async (isbn: string) => {
+    const url = new URL(this.googleApiUrl)
+    url.searchParams.set('q', `isbn:${isbn}`)
+    url.searchParams.set('fields', 'items/volumeInfo(description)')
+
+    const res = await fetch(url)
+    const data = await res.json()
+
+    return data.items[0].volumeInfo.description as string
+  }
 }
 
 export default OpenLibraryBookRepository
