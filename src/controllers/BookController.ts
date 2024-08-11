@@ -20,7 +20,7 @@ class BookController {
 
   getDescriptionByISBN = async (req: Request, res: Response) => {
     const { isbn } = req.query
-    if (typeof isbn !== 'string' || isbn === '')
+    if (typeof isbn !== 'string' && typeof isbn !== 'undefined')
       throw new InvalidParamsError('"isbn" query must be a string')
 
     const desc = await this.repository.getDescriptionByISBN(isbn)

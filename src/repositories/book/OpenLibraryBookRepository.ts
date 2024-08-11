@@ -28,15 +28,17 @@ class OpenLibraryBookRepository extends BookRepository {
     return getEditionData(data.docs)
   }
 
-  getDescriptionByISBN = async (isbn: string) => {
+  getDescriptionByISBN = async (isbn: string | undefined) => {
+    const noDescMsg = 'No hay sinopsis disponible para este título.'
+
+    if (!isbn) return noDescMsg
+
     const url = new URL(this.googleApiUrl)
     url.searchParams.set('q', `isbn:${isbn}`)
     url.searchParams.set('fields', 'items/volumeInfo(description)')
 
     const res = await fetch(url)
     const data = await res.json()
-
-    const noDescMsg = 'No hay sinopsis disponible para este título.'
 
     if (data.items) return data.items[0].volumeInfo?.description ?? noDescMsg
 
