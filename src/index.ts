@@ -18,6 +18,7 @@ const userController = new UserController(
 app.use(express.json())
 
 app.get('/books', bookController.getBooks)
+app.get('/books/:isbn', bookController.getBookByISBN)
 app.get('/books/description', bookController.getDescriptionByISBN)
 
 app.post('/users/register', userController.register)

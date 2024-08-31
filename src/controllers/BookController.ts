@@ -18,6 +18,16 @@ class BookController {
     res.status(200).json({ books })
   }
 
+  getBookByISBN = async (req: Request, res: Response) => {
+    const { isbn } = req.params
+    const { fields } = req.query
+
+    if (!isbn) throw new InvalidParamsError('ISBN is not provided')
+
+    const book = await this.repository.getBookByISBN(isbn, fields as string)
+    res.status(200).json({ book })
+  }
+
   getDescriptionByISBN = async (req: Request, res: Response) => {
     const { isbn } = req.query
     if (typeof isbn !== 'string' && typeof isbn !== 'undefined')

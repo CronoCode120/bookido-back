@@ -28,6 +28,27 @@ class OpenLibraryBookRepository extends BookRepository {
     return getEditionData(data.docs)
   }
 
+  getBookByISBN = async (isbn: string, fields: string | undefined) => {
+    const defFields = ['editions', 'key']
+
+    const fieldsArr = fields ? fields.split(',') : []
+    if (fieldsArr.length) {
+      fieldsArr.forEach(field => {
+        if (field === 'author') defFields.push('author_name')
+        else defFields.push('editions.' + field)
+      })
+    }
+
+    const url = new URL(this.apiUrl)
+    url.searchParams.set('q', `isbn:${isbn}`)
+    url.searchParams.set('fields', defFields.join(','))
+
+    const res = await fetch(url)
+    const data = await res.json()
+
+    return getEditionData(data.docs)[0]
+  }
+
   getDescriptionByISBN = async (isbn: string | undefined) => {
     const noDescMsg = 'No hay sinopsis disponible para este título.'
 
