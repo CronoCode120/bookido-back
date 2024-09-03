@@ -29,6 +29,9 @@ app.post('/books/addToShelve', bookController.addToShelve)
 app.get('/books/shelve', bookController.getBooksInShelve)
 app.delete('/books/removeFromShelve', bookController.removeBookInShelve)
 
+app.post('/books/discard', bookController.discardBook)
+app.get('/books/viewed', bookController.getViewedBooks)
+
 app.post('/users/register', userController.register)
 app.post('/users/login', userController.login)
 

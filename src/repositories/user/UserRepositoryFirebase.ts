@@ -23,6 +23,8 @@ class UserRepositoryFirebase implements UserRepository {
     } else {
       const docRef = doc(this.db, this.collection, id, 'table', isbn)
       await setDoc(docRef, { isbn })
+      const docRef2 = doc(this.db, this.collection, id, 'viewed', isbn)
+      await setDoc(docRef2, { isbn })
   
       const booksUpdated = await this.getBooksInTable(id)
       return booksUpdated
@@ -41,8 +43,7 @@ class UserRepositoryFirebase implements UserRepository {
       if (data.isbn) {
           isbns.push(data.isbn)
       }
-  })
-
+    })
     return isbns
   }
 
@@ -80,7 +81,7 @@ class UserRepositoryFirebase implements UserRepository {
       if (data.isbn) {
           isbns.push(data.isbn)
       }
-  })
+    })
 
     return isbns
   }
@@ -91,6 +92,31 @@ class UserRepositoryFirebase implements UserRepository {
 
     const booksUpdated = await this.getBooksInShelve(id)
     return booksUpdated
+  }
+
+  discardBook = async (id: string, isbn: string) => {
+    const booksInShelve = await this.getBooksInShelve(id)
+    const docRef = doc(this.db, this.collection, id, 'viewed', isbn)
+    await setDoc(docRef, { isbn })
+
+    return "Book discarded"
+  }
+
+  getViewedBooks = async (id: string) => {
+    const docRef = doc(this.db, this.collection, id)
+    const viewedCollectionRef = collection(docRef, 'viewed')
+    
+    const querySnapshot = await getDocs(viewedCollectionRef)
+    const isbns: string[] = []
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      if (data.isbn) {
+          isbns.push(data.isbn)
+      }
+    })
+    console.log(isbns)
+    return isbns
   }
 }
 
