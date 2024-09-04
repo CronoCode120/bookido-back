@@ -21,7 +21,7 @@ class BookController {
     res.status(200).json({ books })
   }
 
-  getBookByISBN = async (req: Request, res: Response) => {
+  getBookByISBN = async (req: Request, res: Response) => {   
     const { isbn } = req.params
     const { fields } = req.query
 
@@ -57,6 +57,7 @@ class BookController {
 
   getBooksInTable = async (req: Request, res: Response) => {
     const { id } = req.query
+    
 
     if (!id || typeof id !== 'string') {
       throw new InvalidParamsError('"id" query must be a string and cannot be undefined');

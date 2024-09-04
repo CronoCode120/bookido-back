@@ -18,7 +18,6 @@ const userController = new UserController(
 app.use(express.json())
 
 app.get('/books', bookController.getBooks)
-app.get('/books/:isbn', bookController.getBookByISBN)
 app.get('/books/description', bookController.getDescriptionByISBN)
 
 app.post('/books/addToTable', bookController.addToTable)
@@ -31,6 +30,7 @@ app.delete('/books/removeFromShelve', bookController.removeBookInShelve)
 
 app.post('/books/discard', bookController.discardBook)
 app.get('/books/viewed', bookController.getViewedBooks)
+app.get('/books/:isbn', bookController.getBookByISBN)
 
 app.post('/users/register', userController.register)
 app.post('/users/login', userController.login)
