@@ -115,7 +115,6 @@ class UserRepositoryFirebase implements UserRepository {
           isbns.push(data.isbn)
       }
     })
-    console.log(isbns)
     return isbns
   }
 }
