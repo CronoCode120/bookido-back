@@ -32,7 +32,7 @@ app.post('/books/discard', bookController.discardBook)
 app.get('/books/viewed', bookController.getViewedBooks)
 app.get('/books/:isbn', bookController.getBookByISBN)
 
-app.post('/users/register', userController.register)
+app.post('/users', userController.register)
 app.post('/users/login', userController.login)
 
 app.listen(PORT, () => {
