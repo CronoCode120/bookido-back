@@ -10,29 +10,29 @@ class UserRepositoryFirebase implements UserRepository {
     this.db = getFirestore(app)
   }
 
-  create = async (id: string, email: string, username: string) => {
-    const docRef = doc(this.db, this.collection, id)
-    await setDoc(docRef, { id, email, username })
-    return id
+  create = async (userId: string, email: string, username: string) => {
+    const docRef = doc(this.db, this.collection, userId)
+    await setDoc(docRef, { userId, email, username })
+    return userId
   }
 
-  addBookToTable = async (id: string, isbn: string) => {
-    const booksInShelve = await this.getBooksInShelve(id)
+  addBookToTable = async (userId: string, isbn: string) => {
+    const booksInShelve = await this.getBooksInShelve(userId)
     if (booksInShelve.includes(isbn)) {
       throw new Error(`The book with ISBN ${isbn} is in the shelve.`)
     } else {
-      const docRef = doc(this.db, this.collection, id, 'table', isbn)
+      const docRef = doc(this.db, this.collection, userId, 'table', isbn)
       await setDoc(docRef, { isbn })
-      const docRef2 = doc(this.db, this.collection, id, 'viewed', isbn)
+      const docRef2 = doc(this.db, this.collection, userId, 'viewed', isbn)
       await setDoc(docRef2, { isbn })
   
-      const booksUpdated = await this.getBooksInTable(id)
+      const booksUpdated = await this.getBooksInTable(userId)
       return booksUpdated
     }
   }
 
-  getBooksInTable = async (id: string) => {
-    const docRef = doc(this.db, this.collection, id)
+  getBooksInTable = async (userId: string) => {
+    const docRef = doc(this.db, this.collection, userId)
     const tableCollectionRef = collection(docRef, 'table')
     
     const querySnapshot = await getDocs(tableCollectionRef)
@@ -47,30 +47,30 @@ class UserRepositoryFirebase implements UserRepository {
     return isbns
   }
 
-  removeBookInTable = async (id: string, isbn: string) => {
-    const docRef = doc(this.db, this.collection, id, 'table', isbn)
+  removeBookInTable = async (userId: string, isbn: string) => {
+    const docRef = doc(this.db, this.collection, userId, 'table', isbn)
     await deleteDoc(docRef)
 
-    const booksUpdated = await this.getBooksInShelve(id)
+    const booksUpdated = await this.getBooksInShelve(userId)
     return booksUpdated
   }
 
-  addBookToShelve = async (id: string, isbn: string) => {
-    const booksInTable = await this.getBooksInTable(id)
+  addBookToShelve = async (userId: string, isbn: string) => {
+    const booksInTable = await this.getBooksInTable(userId)
     if (booksInTable.includes(isbn)) {
-      const docRef = doc(this.db, this.collection, id, 'shelve', isbn)
+      const docRef = doc(this.db, this.collection, userId, 'shelve', isbn)
       await setDoc(docRef, { isbn })
-      await this.removeBookInTable(id, isbn)
+      await this.removeBookInTable(userId, isbn)
 
-      const booksUpdated = await this.getBooksInShelve(id)
+      const booksUpdated = await this.getBooksInShelve(userId)
       return booksUpdated
     } else {
         throw new Error(`The book with ISBN ${isbn} is not in the table.`)
     }
   }
 
-  getBooksInShelve = async (id: string) => {
-    const docRef = doc(this.db, this.collection, id)
+  getBooksInShelve = async (userId: string) => {
+    const docRef = doc(this.db, this.collection, userId)
     const shelveCollectionRef = collection(docRef, 'shelve')
     
     const querySnapshot = await getDocs(shelveCollectionRef)
@@ -86,27 +86,27 @@ class UserRepositoryFirebase implements UserRepository {
     return isbns
   }
 
-  removeBookInShelve = async (id: string, isbn: string) => {
-    const docRef = doc(this.db, this.collection, id, 'shelve', isbn)
+  removeBookInShelve = async (userId: string, isbn: string) => {
+    const docRef = doc(this.db, this.collection, userId, 'shelve', isbn)
     await deleteDoc(docRef)
 
-    const booksUpdated = await this.getBooksInShelve(id)
+    const booksUpdated = await this.getBooksInShelve(userId)
     return booksUpdated
   }
 
-  discardBook = async (id: string, isbn: string) => {
-    const booksInShelve = await this.getBooksInShelve(id)
-    const docRef = doc(this.db, this.collection, id, 'viewed', isbn)
+  discardBook = async (userId: string, isbn: string) => {
+    const booksInShelve = await this.getBooksInShelve(userId)
+    const docRef = doc(this.db, this.collection, userId, 'viewed', isbn)
     await setDoc(docRef, { isbn })
 
     return "Book discarded"
   }
 
-  getViewedBooks = async (id: string) => {
-    const docRef = doc(this.db, this.collection, id)
-    const viewedCollectionRef = collection(docRef, 'viewed')
+  getViewedBooks = async (userId: string) => {
+    const docRef = doc(this.db, this.collection, userId)
+    const viewedColRef = collection(docRef, 'viewed')
     
-    const querySnapshot = await getDocs(viewedCollectionRef)
+    const querySnapshot = await getDocs(viewedColRef)
     const isbns: string[] = []
 
     querySnapshot.forEach((doc) => {
