@@ -17,17 +17,21 @@ class UserRepositoryFirebase implements UserRepository {
   }
 
   addBookToTable = async (userId: string, isbn: string) => {
-    const booksInShelve = await this.getBooksInShelve(userId)
+    const booksInShelve = await this.getBooksInShelf(userId)
     if (booksInShelve.includes(isbn)) {
       throw new Error(`The book with ISBN ${isbn} is in the shelve.`)
     } else {
-      const docRef = doc(this.db, this.collection, userId, 'table', isbn)
-      await setDoc(docRef, { isbn })
-      const docRef2 = doc(this.db, this.collection, userId, 'viewed', isbn)
-      await setDoc(docRef2, { isbn })
-  
-      const booksUpdated = await this.getBooksInTable(userId)
-      return booksUpdated
+      if ((await this.getBooksInTable(userId)).length == 20) {
+        return 'err'
+      } else {
+        const docRef = doc(this.db, this.collection, userId, 'table', isbn)
+        await setDoc(docRef, { isbn })
+        const docRef2 = doc(this.db, this.collection, userId, 'viewed', isbn)
+        await setDoc(docRef2, { isbn })
+    
+        const booksUpdated = await this.getBooksInTable(userId)
+        return booksUpdated
+      }
     }
   }
 
@@ -51,25 +55,29 @@ class UserRepositoryFirebase implements UserRepository {
     const docRef = doc(this.db, this.collection, userId, 'table', isbn)
     await deleteDoc(docRef)
 
-    const booksUpdated = await this.getBooksInShelve(userId)
+    const booksUpdated = await this.getBooksInShelf(userId)
     return booksUpdated
   }
 
-  addBookToShelve = async (userId: string, isbn: string) => {
+  shelve = async (userId: string, isbn: string) => {
     const booksInTable = await this.getBooksInTable(userId)
     if (booksInTable.includes(isbn)) {
-      const docRef = doc(this.db, this.collection, userId, 'shelve', isbn)
-      await setDoc(docRef, { isbn })
-      await this.removeBookInTable(userId, isbn)
+      if ((await this.getBooksInShelf(userId)).length == 100) {
+        return 'err'
+      } else {
+        const docRef = doc(this.db, this.collection, userId, 'shelve', isbn)
+        await setDoc(docRef, { isbn })
+        await this.removeBookInTable(userId, isbn)
 
-      const booksUpdated = await this.getBooksInShelve(userId)
-      return booksUpdated
+        const booksUpdated = await this.getBooksInShelf(userId)
+        return booksUpdated
+      }
     } else {
         throw new Error(`The book with ISBN ${isbn} is not in the table.`)
     }
   }
 
-  getBooksInShelve = async (userId: string) => {
+  getBooksInShelf = async (userId: string) => {
     const docRef = doc(this.db, this.collection, userId)
     const shelveCollectionRef = collection(docRef, 'shelve')
     
@@ -86,16 +94,15 @@ class UserRepositoryFirebase implements UserRepository {
     return isbns
   }
 
-  removeBookInShelve = async (userId: string, isbn: string) => {
+  unshelve = async (userId: string, isbn: string) => {
     const docRef = doc(this.db, this.collection, userId, 'shelve', isbn)
     await deleteDoc(docRef)
 
-    const booksUpdated = await this.getBooksInShelve(userId)
+    const booksUpdated = await this.getBooksInShelf(userId)
     return booksUpdated
   }
 
   discardBook = async (userId: string, isbn: string) => {
-    const booksInShelve = await this.getBooksInShelve(userId)
     const docRef = doc(this.db, this.collection, userId, 'viewed', isbn)
     await setDoc(docRef, { isbn })
 
