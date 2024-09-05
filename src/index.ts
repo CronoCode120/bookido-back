@@ -20,13 +20,13 @@ app.use(express.json())
 app.get('/books', bookController.getBooks)
 app.get('/books/description', bookController.getDescriptionByISBN)
 
-app.post('/books/addToTable', bookController.addToTable)
+app.post('/books/table', bookController.addToTable)
 app.get('/books/table', bookController.getBooksInTable)
-app.delete('/books/removeFromTable', bookController.removeBookInTable)
+app.delete('/books/table', bookController.removeBookInTable)
 
-app.post('/books/addToShelve', bookController.addToShelve)
-app.get('/books/shelve', bookController.getBooksInShelve)
-app.delete('/books/removeFromShelve', bookController.removeBookInShelve)
+app.post('/books/shelf', bookController.shelve)
+app.get('/books/shelf', bookController.getBooksInShelf)
+app.delete('/books/shelf', bookController.unshelve)
 
 app.post('/books/discard', bookController.discardBook)
 app.get('/books/viewed', bookController.getViewedBooks)

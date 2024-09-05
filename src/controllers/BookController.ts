@@ -45,7 +45,7 @@ class BookController {
   }
 
   addToTable = async (req: Request, res: Response) => {
-    const { isbn, userId } = req.query
+    const { isbn, userId } = req.body
     
     if (!isbn || typeof isbn !== 'string') {
       throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
@@ -56,7 +56,11 @@ class BookController {
     }
 
     const bookAdded = await this.userRepository.addBookToTable(userId, isbn)
-    res.status(200).json({ table: bookAdded })
+    if (bookAdded != 'err') {
+      res.status(200).json({ table: bookAdded })
+    } else {
+      res.status(400).json({ error: 'You have more than 20 books on the table!' })
+    }
   }
 
   getBooksInTable = async (req: Request, res: Response) => {
@@ -72,7 +76,7 @@ class BookController {
   }
 
   removeBookInTable = async (req: Request, res: Response) => {
-    const { isbn, userId } = req.query
+    const { isbn, userId } = req.body
     
     if (!isbn || typeof isbn !== 'string') {
       throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
@@ -86,8 +90,8 @@ class BookController {
     res.status(200).json({ table: bookRemoved })
   }
 
-  addToShelve = async (req: Request, res: Response) => {
-    const { isbn, userId } = req.query
+  shelve = async (req: Request, res: Response) => {
+    const { isbn, userId } = req.body
     
     if (!isbn || typeof isbn !== 'string') {
       throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
@@ -97,23 +101,27 @@ class BookController {
       throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
     }
 
-    const bookAdded = await this.userRepository.addBookToShelve(userId, isbn)
-    res.status(200).json({ shelve: bookAdded })
+    const bookAdded = await this.userRepository.shelve(userId, isbn)
+    if (bookAdded != 'err') {
+      res.status(200).json({ shelve: bookAdded })
+    } else {
+      res.status(400).json({ error: 'You have more than 100 books on the shelf!' })
+    }
   }
 
-  getBooksInShelve = async (req: Request, res: Response) => {
+  getBooksInShelf = async (req: Request, res: Response) => {
     const { userId } = req.query
 
     if (!userId || typeof userId !== 'string') {
       throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
     }
 
-    const books = await this.userRepository.getBooksInShelve(userId)
+    const books = await this.userRepository.getBooksInShelf(userId)
     res.status(200).json({ shelve: books })
   }
 
-  removeBookInShelve = async (req: Request, res: Response) => {
-    const { isbn, userId } = req.query
+  unshelve = async (req: Request, res: Response) => {
+    const { isbn, userId } = req.body
     
     if (!isbn || typeof isbn !== 'string') {
       throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
@@ -123,12 +131,12 @@ class BookController {
       throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
     }
 
-    const bookRemoved = await this.userRepository.removeBookInShelve(userId, isbn)
+    const bookRemoved = await this.userRepository.unshelve(userId, isbn)
     res.status(200).json({ shelve: bookRemoved })
   }
 
   discardBook = async (req: Request, res: Response) => {
-    const { isbn, userId } = req.query
+    const { isbn, userId } = req.body
     
     if (!isbn || typeof isbn !== 'string') {
       throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
