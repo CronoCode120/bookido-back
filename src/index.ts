@@ -2,9 +2,11 @@ import 'dotenv/config'
 import express from 'express'
 import BookController from './controllers/BookController.js'
 import UserController from './controllers/UserController.js'
+import ReviewController from './controllers/ReviewController.js'
 import OpenLibraryBookRepository from './repositories/book/OpenLibraryBookRepository.js'
 import AuthFirebase from './models/AuthFirebase.js'
 import UserRepositoryFirebase from './repositories/user/UserRepositoryFirebase.js'
+import ReviewRepositoryFirebase from './repositories/review/ReviewRepositoryFirebase.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -14,6 +16,7 @@ const userController = new UserController(
   new AuthFirebase(),
   new UserRepositoryFirebase()
 )
+const reviewController = new ReviewController(new ReviewRepositoryFirebase(), new UserRepositoryFirebase())
 
 app.use(express.json())
 
@@ -34,6 +37,9 @@ app.get('/books/:isbn', bookController.getBookByISBN)
 
 app.post('/users', userController.register)
 app.post('/users/login', userController.login)
+
+app.get('/review', reviewController.getReviews)
+app.post('/review', reviewController.addReview)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

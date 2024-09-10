@@ -1,6 +1,7 @@
 import { setDoc, doc, Firestore, getFirestore, getDocs, collection, deleteDoc } from 'firebase/firestore'
 import { app } from '../firebase.js'
 import UserRepository from './UserRepository.js'
+import { Rating } from '../../types.js'
 
 class UserRepositoryFirebase implements UserRepository {
   db: Firestore
@@ -123,6 +124,16 @@ class UserRepositoryFirebase implements UserRepository {
       }
     })
     return isbns
+  }
+
+  addReview = async (userId: string, isbn: string, value: Rating, review: string) => {
+    if (review.length <= 5) {
+      const collectionRef = collection(this.db, this.collection, userId, 'shelve')
+      const docRef = doc(collectionRef, isbn)
+      await setDoc(docRef, { value, review })
+    } else {
+      return 'err'
+    }
   }
 }
 
