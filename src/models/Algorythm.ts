@@ -35,13 +35,12 @@ class Algorythm {
 
         const filteredUsers = users.flat().filter(user => user.userId !== userId)
 
-        /*const usersWithShelves = await Promise.all(filteredUsers.map(async (user) => {
+        const usersWithShelves = await Promise.all(filteredUsers.map(async (user) => {
             const shelf = await this.userRepository.getBooksInShelf(user.userId)
             return { ...user, shelf }
         }))
 
-        return usersWithShelves*/
-        return filteredUsers
+        return usersWithShelves
     }
 }
 
