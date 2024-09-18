@@ -39,7 +39,9 @@ app.post('/users', userController.register)
 app.post('/users/login', userController.login)
 
 app.get('/review', reviewController.getReviews)
-app.post('/review', reviewController.addReview)
+app.post('/reviews', reviewController.addReview)
+app.get('/reviewFromBook', reviewController.getReviewFromBook)
+app.get('/reviewFromUser', reviewController.getReviewFromUser)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

@@ -1,4 +1,4 @@
-import { setDoc, doc, Firestore, getFirestore, getDocs, collection, deleteDoc, query, where, DocumentData } from 'firebase/firestore'
+import { setDoc, doc, Firestore, getFirestore, getDocs, collection, deleteDoc, query, where, DocumentData, getDoc } from 'firebase/firestore'
 import { app } from '../firebase.js'
 import { Rating } from '../../types.js'
 import { userInfo } from 'os'
@@ -41,6 +41,30 @@ class ReviewRepositoryFirebase {
     })
     
     return reviews
+  }
+
+  getReviewFromBook = async (isbn: string, userId: string) => {
+    const reviewDocRef = doc(this.db, this.collection, isbn, 'data', userId)
+    const docSnapshot = await getDoc(reviewDocRef)
+
+    if (docSnapshot.exists()) {
+      const data = docSnapshot.data()
+      return data
+    } else {
+        return null
+    }
+  }
+
+  getReviewFromUser = async (userId: string, isbn: string) => {
+    const reviewDocRef = doc(this.db, 'users', userId, 'shelve', isbn)
+    const docSnapshot = await getDoc(reviewDocRef)
+
+    if (docSnapshot.exists()) {
+      const data = docSnapshot.data()
+      return data
+    } else {
+        return null
+    }
   }
 
   /*removeBookInTable = async (userId: string, isbn: string) => {

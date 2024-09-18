@@ -120,7 +120,7 @@ class UserRepositoryFirebase implements UserRepository {
     querySnapshot.forEach((doc) => {
       const data = doc.data()
       if (data.isbn) {
-          isbns.push(data.isbn)
+        isbns.push(data.isbn)
       }
     })
     return isbns
