@@ -49,18 +49,6 @@ class ReviewController {
     const reviewValue = await this.repository.getReviewFromBook(isbn, userId)
     res.status(200).json({ review: reviewValue })
   }
-
-  getReviewFromUser = async (req: Request, res: Response) => {
-    const { userId, isbn } = req.query
-
-    if (typeof userId !== 'string')
-      throw new InvalidParamsError('"userId" query must be a string')
-    if (typeof isbn !== 'string')
-      throw new InvalidParamsError('"isbn" query must be a string')
-
-    const reviewValue = await this.repository.getReviewFromUser(userId, isbn)
-    res.status(200).json({ review: reviewValue })
-  }
 }
 
 export default ReviewController

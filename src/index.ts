@@ -11,7 +11,7 @@ import ReviewRepositoryFirebase from './repositories/review/ReviewRepositoryFire
 const app = express()
 const PORT = process.env.PORT ?? 3000
 
-const bookController = new BookController(new OpenLibraryBookRepository(), new UserRepositoryFirebase())
+const bookController = new BookController(new OpenLibraryBookRepository(), new UserRepositoryFirebase(), new ReviewRepositoryFirebase())
 const userController = new UserController(
   new AuthFirebase(),
   new UserRepositoryFirebase()
@@ -38,10 +38,12 @@ app.get('/books/:isbn', bookController.getBookByISBN)
 app.post('/users', userController.register)
 app.post('/users/login', userController.login)
 
-app.get('/review', reviewController.getReviews)
-app.post('/reviews', reviewController.addReview)
+app.get('/reviews', reviewController.getReviews)
+app.post('/review', reviewController.addReview)
 app.get('/reviewFromBook', reviewController.getReviewFromBook)
-app.get('/reviewFromUser', reviewController.getReviewFromUser)
+app.get('/reviewFromUser', bookController.getReviewFromUser)
+
+app.get('/algorythm', bookController.algorythm)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

@@ -1,4 +1,4 @@
-import { setDoc, doc, Firestore, getFirestore, getDocs, collection, deleteDoc } from 'firebase/firestore'
+import { setDoc, doc, Firestore, getFirestore, getDocs, collection, deleteDoc, getDoc } from 'firebase/firestore'
 import { app } from '../firebase.js'
 import UserRepository from './UserRepository.js'
 import { Rating } from '../../types.js'
@@ -74,7 +74,7 @@ class UserRepositoryFirebase implements UserRepository {
         return booksUpdated
       }
     } else {
-        throw new Error(`The book with ISBN ${isbn} is not in the table.`)
+      throw new Error(`The book with ISBN ${isbn} is not in the table.`)
     }
   }
 
@@ -86,11 +86,8 @@ class UserRepositoryFirebase implements UserRepository {
     const isbns: string[] = []
 
     querySnapshot.forEach((doc) => {
-      const data = doc.data()
-      if (data.isbn) {
-          isbns.push(data.isbn)
-      }
-    })
+      isbns.push(doc.id)
+    })  
 
     return isbns
   }
@@ -133,6 +130,18 @@ class UserRepositoryFirebase implements UserRepository {
       await setDoc(docRef, { value, review })
     } else {
       return 'err'
+    }
+  }
+
+  getReviewFromUser = async (userId: string, isbn: string) => {
+    const reviewDocRef = doc(this.db, this.collection, userId, 'shelve', isbn)
+    const docSnapshot = await getDoc(reviewDocRef)
+
+    if (docSnapshot.exists()) {
+      const data = docSnapshot.data()
+      return data
+    } else {
+        return null
     }
   }
 }

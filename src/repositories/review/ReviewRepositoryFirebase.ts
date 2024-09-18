@@ -55,18 +55,6 @@ class ReviewRepositoryFirebase {
     }
   }
 
-  getReviewFromUser = async (userId: string, isbn: string) => {
-    const reviewDocRef = doc(this.db, 'users', userId, 'shelve', isbn)
-    const docSnapshot = await getDoc(reviewDocRef)
-
-    if (docSnapshot.exists()) {
-      const data = docSnapshot.data()
-      return data
-    } else {
-        return null
-    }
-  }
-
   /*removeBookInTable = async (userId: string, isbn: string) => {
     const docRef = doc(this.db, this.collection, userId, 'table', isbn)
     await deleteDoc(docRef)

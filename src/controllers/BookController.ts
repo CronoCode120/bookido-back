@@ -2,14 +2,18 @@ import { Request, Response } from 'express'
 import BookRepository from '../repositories/book/OpenLibraryBookRepository.js'
 import UserRepository from '../repositories/user/UserRepositoryFirebase.js'
 import InvalidParamsError from '../errors/InvalidParams.js'
+import Algorythm from '../models/algorythm.js'
+import ReviewRepository from '../repositories/review/ReviewRepositoryFirebase.js'
 
 class BookController {
   readonly repository
   readonly userRepository
+  readonly reviewRepository
 
-  constructor(bookRepository: BookRepository, userRepository: UserRepository) {
+  constructor(bookRepository: BookRepository, userRepository: UserRepository, reviewRepository: ReviewRepository) {
     this.repository = bookRepository
     this.userRepository = userRepository
+    this.reviewRepository = reviewRepository
   }
 
   getBooks = async (req: Request, res: Response) => {
@@ -159,6 +163,28 @@ class BookController {
 
     const books = await this.userRepository.getViewedBooks(userId)
     res.status(200).json({ viewed: books })
+  }
+
+  getReviewFromUser = async (req: Request, res: Response) => {
+    const { userId, isbn } = req.query
+
+    if (typeof userId !== 'string')
+      throw new InvalidParamsError('"userId" query must be a string')
+    if (typeof isbn !== 'string')
+      throw new InvalidParamsError('"isbn" query must be a string')
+
+    const reviewValue = await this.userRepository.getReviewFromUser(userId, isbn)
+    res.status(200).json({ review: reviewValue })
+  }
+
+  algorythm = async (req: Request, res: Response) => {
+    const { userId } = req.query
+
+    if (typeof userId !== 'string')
+      throw new InvalidParamsError('"userId" query must be a string')
+
+    const algorythm = await Algorythm.execute(userId, this.userRepository, this.reviewRepository)
+    res.status(200).json({ result: algorythm })
   }
 }
 
