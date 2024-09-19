@@ -13,7 +13,7 @@ class ReviewRepositoryFirebase {
   }
 
   addReview = async (userId: string, isbn: string, value: Rating, review: string) => {
-    if (review.length <= 5) {
+    if (review.length >= 5) {
       const collectionRef = collection(this.db, this.collection, isbn, 'data')
       const docRef = doc(collectionRef, userId)
       await setDoc(docRef, { value, review })
