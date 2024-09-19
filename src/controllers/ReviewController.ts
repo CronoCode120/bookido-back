@@ -7,24 +7,39 @@ class ReviewController {
   readonly repository
   readonly userRepository
 
-  constructor(reviewRepository: ReviewRepository, userRepository: UserRepository) {
+  constructor(
+    reviewRepository: ReviewRepository,
+    userRepository: UserRepository
+  ) {
     this.repository = reviewRepository
     this.userRepository = userRepository
   }
 
   addReview = async (req: Request, res: Response) => {
     const { userId, isbn, value, review } = req.body
-    
+
     if (!isbn || typeof isbn !== 'string') {
-      throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"isbn" query must be a string and cannot be undefined'
+      )
     }
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
-    const reviewAdded = await this.repository.addReview(userId, isbn, value, review)
-    await this.userRepository.addReview(userId, isbn, value, review)
+    const reviewAdded = await this.repository.addReview(
+      userId,
+      isbn,
+      value,
+      review
+    )
+    await Promise.all([
+      this.userRepository.addReview(userId, isbn, value, review),
+      this.userRepository.removeBookInTable(userId, isbn)
+    ])
     res.status(200).json({ reviews: reviewAdded })
   }
 
@@ -32,7 +47,7 @@ class ReviewController {
     const { isbn } = req.query
 
     if (typeof isbn !== 'string')
-        throw new InvalidParamsError('"isbn" query must be a string')
+      throw new InvalidParamsError('"isbn" query must be a string')
 
     const reviews = await this.repository.getReviews(isbn)
     res.status(200).json({ reviews })
