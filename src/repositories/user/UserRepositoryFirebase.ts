@@ -1,4 +1,13 @@
-import { setDoc, doc, Firestore, getFirestore, getDocs, collection, deleteDoc, getDoc } from 'firebase/firestore'
+import {
+  setDoc,
+  doc,
+  Firestore,
+  getFirestore,
+  getDocs,
+  collection,
+  deleteDoc,
+  getDoc
+} from 'firebase/firestore'
 import { app } from '../firebase.js'
 import UserRepository from './UserRepository.js'
 import { Rating } from '../../types.js'
@@ -29,7 +38,7 @@ class UserRepositoryFirebase implements UserRepository {
         await setDoc(docRef, { isbn })
         const docRef2 = doc(this.db, this.collection, userId, 'viewed', isbn)
         await setDoc(docRef2, { isbn })
-    
+
         const booksUpdated = await this.getBooksInTable(userId)
         return booksUpdated
       }
@@ -39,14 +48,14 @@ class UserRepositoryFirebase implements UserRepository {
   getBooksInTable = async (userId: string) => {
     const docRef = doc(this.db, this.collection, userId)
     const tableCollectionRef = collection(docRef, 'table')
-    
+
     const querySnapshot = await getDocs(tableCollectionRef)
     const isbns: string[] = []
 
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(doc => {
       const data = doc.data()
       if (data.isbn) {
-          isbns.push(data.isbn)
+        isbns.push(data.isbn)
       }
     })
     return isbns
@@ -56,7 +65,7 @@ class UserRepositoryFirebase implements UserRepository {
     const docRef = doc(this.db, this.collection, userId, 'table', isbn)
     await deleteDoc(docRef)
 
-    const booksUpdated = await this.getBooksInShelf(userId)
+    const booksUpdated = await this.getBooksInTable(userId)
     return booksUpdated
   }
 
@@ -81,13 +90,13 @@ class UserRepositoryFirebase implements UserRepository {
   getBooksInShelf = async (userId: string) => {
     const docRef = doc(this.db, this.collection, userId)
     const shelveCollectionRef = collection(docRef, 'shelve')
-    
+
     const querySnapshot = await getDocs(shelveCollectionRef)
     const isbns: string[] = []
 
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(doc => {
       isbns.push(doc.id)
-    })  
+    })
 
     return isbns
   }
@@ -104,17 +113,17 @@ class UserRepositoryFirebase implements UserRepository {
     const docRef = doc(this.db, this.collection, userId, 'viewed', isbn)
     await setDoc(docRef, { isbn })
 
-    return "Book discarded"
+    return 'Book discarded'
   }
 
   getViewedBooks = async (userId: string) => {
     const docRef = doc(this.db, this.collection, userId)
     const viewedColRef = collection(docRef, 'viewed')
-    
+
     const querySnapshot = await getDocs(viewedColRef)
     const isbns: string[] = []
 
-    querySnapshot.forEach((doc) => {
+    querySnapshot.forEach(doc => {
       const data = doc.data()
       if (data.isbn) {
         isbns.push(data.isbn)
@@ -123,9 +132,19 @@ class UserRepositoryFirebase implements UserRepository {
     return isbns
   }
 
-  addReview = async (userId: string, isbn: string, value: Rating, review: string) => {
+  addReview = async (
+    userId: string,
+    isbn: string,
+    value: Rating,
+    review: string
+  ) => {
     if (review.length <= 5) {
-      const collectionRef = collection(this.db, this.collection, userId, 'shelve')
+      const collectionRef = collection(
+        this.db,
+        this.collection,
+        userId,
+        'shelve'
+      )
       const docRef = doc(collectionRef, isbn)
       await setDoc(docRef, { value, review })
     } else {
@@ -141,7 +160,7 @@ class UserRepositoryFirebase implements UserRepository {
       const data = docSnapshot.data()
       return data
     } else {
-        return null
+      return null
     }
   }
 }
