@@ -43,6 +43,21 @@ class ReviewRepositoryFirebase {
     return reviews
   }
 
+  getValuesFromBook = async (isbn: string) => {
+    const reviewCollectionRef = collection(this.db, this.collection, isbn, 'data')
+    const querySnapshot = await getDocs(reviewCollectionRef)
+    const reviews: DocumentData[] = []
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      if (data) {     
+        reviews.push({ userId: doc.id, value: data.value, isbn })
+      }
+    })
+    
+    return reviews
+  }
+
   getReviewFromBook = async (isbn: string, userId: string) => {
     const reviewDocRef = doc(this.db, this.collection, isbn, 'data', userId)
     const docSnapshot = await getDoc(reviewDocRef)
@@ -50,6 +65,18 @@ class ReviewRepositoryFirebase {
     if (docSnapshot.exists()) {
       const data = docSnapshot.data()
       return data
+    } else {
+        return null
+    }
+  }
+
+  getValueReviewFromBook = async (isbn: string, userId: string) => {
+    const reviewDocRef = doc(this.db, this.collection, isbn, 'data', userId)
+    const docSnapshot = await getDoc(reviewDocRef)
+
+    if (docSnapshot.exists()) {
+      const data = docSnapshot.data()
+      return data.value
     } else {
         return null
     }

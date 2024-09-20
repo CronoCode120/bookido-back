@@ -163,6 +163,18 @@ class UserRepositoryFirebase implements UserRepository {
       return null
     }
   }
+
+  getValueReviewFromUser = async (userId: string, isbn: string) => {
+    const reviewDocRef = doc(this.db, this.collection, userId, 'shelve', isbn)
+    const docSnapshot = await getDoc(reviewDocRef)
+
+    if (docSnapshot.exists()) {
+      const data = docSnapshot.data()
+      return data.value
+    } else {
+      return null
+    }
+  }
 }
 
 export default UserRepositoryFirebase
