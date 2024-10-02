@@ -11,7 +11,6 @@ class OpenLibraryBookRepository extends BookRepository {
     'editions.title',
     'author_name',
     'editions.publisher',
-    'subject',
     'editions.publish_date',
     'editions.isbn'
   ]
@@ -31,6 +30,21 @@ class OpenLibraryBookRepository extends BookRepository {
     const data = await res.json()
 
     return filterByIsbn(getEditionData(data.docs), isbns)
+  }
+
+  getBooksByTitle = async (title: string) => {
+    const url = new URL(this.apiUrl)
+    url.searchParams.set('title', title)
+    url.searchParams.set(
+      'fields',
+      'editions,key,editions.title,editions.publisher,editions.isbn'
+    )
+    url.searchParams.set('limit', '10')
+
+    const res = await fetch(url)
+    const data = await res.json()
+
+    return getEditionData(data.docs)
   }
 
   getBookByISBN = async (isbn: string, fields: string | undefined) => {
