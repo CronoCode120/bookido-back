@@ -10,7 +10,11 @@ class BookController {
   readonly userRepository
   readonly reviewRepository
 
-  constructor(bookRepository: BookRepository, userRepository: UserRepository, reviewRepository: ReviewRepository) {
+  constructor(
+    bookRepository: BookRepository,
+    userRepository: UserRepository,
+    reviewRepository: ReviewRepository
+  ) {
     this.repository = bookRepository
     this.userRepository = userRepository
     this.reviewRepository = reviewRepository
@@ -21,15 +25,20 @@ class BookController {
     if (page && typeof page !== 'string')
       throw new InvalidParamsError('"page" query must be a string')
 
-    if (typeof userId !== 'string') throw new InvalidParamsError('"userId" query must be a string')
+    if (typeof userId !== 'string')
+      throw new InvalidParamsError('"userId" query must be a string')
 
     const isbns = await this.userRepository.getViewedBooks(userId)
 
-    const books = await this.repository.getBooksByPublisher(page, 'alpha decay', isbns)
+    const books = await this.repository.getBooksByPublisher(
+      page,
+      'alpha decay',
+      isbns
+    )
     res.status(200).json({ books })
   }
 
-  getBookByISBN = async (req: Request, res: Response) => {   
+  getBookByISBN = async (req: Request, res: Response) => {
     const { isbn } = req.params
     const { fields } = req.query
 
@@ -48,31 +57,47 @@ class BookController {
     res.status(200).json({ description: desc })
   }
 
+  getBooksByTitle = async (req: Request, res: Response) => {
+    const { title } = req.query
+    if (typeof title !== 'string' || title === '')
+      throw new InvalidParamsError('"title" query must contain text')
+
+    const books = await this.repository.getBooksByTitle(title)
+    res.status(200).json({ books })
+  }
+
   addToTable = async (req: Request, res: Response) => {
     const { isbn, userId } = req.body
-    
+
     if (!isbn || typeof isbn !== 'string') {
-      throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"isbn" query must be a string and cannot be undefined'
+      )
     }
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
     const bookAdded = await this.userRepository.addBookToTable(userId, isbn)
     if (bookAdded != 'err') {
       res.status(200).json({ table: bookAdded })
     } else {
-      res.status(400).json({ error: 'You have more than 20 books on the table!' })
+      res
+        .status(400)
+        .json({ error: 'You have more than 20 books on the table!' })
     }
   }
 
   getBooksInTable = async (req: Request, res: Response) => {
     const { userId } = req.query
-    
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
     const books = await this.userRepository.getBooksInTable(userId)
@@ -81,35 +106,48 @@ class BookController {
 
   removeBookInTable = async (req: Request, res: Response) => {
     const { isbn, userId } = req.body
-    
+
     if (!isbn || typeof isbn !== 'string') {
-      throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"isbn" query must be a string and cannot be undefined'
+      )
     }
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
-    const bookRemoved = await this.userRepository.removeBookInTable(userId, isbn)
+    const bookRemoved = await this.userRepository.removeBookInTable(
+      userId,
+      isbn
+    )
     res.status(200).json({ table: bookRemoved })
   }
 
   shelve = async (req: Request, res: Response) => {
     const { isbn, userId } = req.body
-    
+
     if (!isbn || typeof isbn !== 'string') {
-      throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"isbn" query must be a string and cannot be undefined'
+      )
     }
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
     const bookAdded = await this.userRepository.shelve(userId, isbn)
     if (bookAdded != 'err') {
       res.status(200).json({ shelve: bookAdded })
     } else {
-      res.status(400).json({ error: 'You have more than 100 books on the shelf!' })
+      res
+        .status(400)
+        .json({ error: 'You have more than 100 books on the shelf!' })
     }
   }
 
@@ -117,7 +155,9 @@ class BookController {
     const { userId } = req.query
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
     const books = await this.userRepository.getBooksInShelf(userId)
@@ -126,13 +166,17 @@ class BookController {
 
   unshelve = async (req: Request, res: Response) => {
     const { isbn, userId } = req.body
-    
+
     if (!isbn || typeof isbn !== 'string') {
-      throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"isbn" query must be a string and cannot be undefined'
+      )
     }
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
     const bookRemoved = await this.userRepository.unshelve(userId, isbn)
@@ -141,13 +185,17 @@ class BookController {
 
   discardBook = async (req: Request, res: Response) => {
     const { isbn, userId } = req.body
-    
+
     if (!isbn || typeof isbn !== 'string') {
-      throw new InvalidParamsError('"isbn" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"isbn" query must be a string and cannot be undefined'
+      )
     }
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
     const bookDiscarded = await this.userRepository.discardBook(userId, isbn)
@@ -158,7 +206,9 @@ class BookController {
     const { userId } = req.query
 
     if (!userId || typeof userId !== 'string') {
-      throw new InvalidParamsError('"userId" query must be a string and cannot be undefined');
+      throw new InvalidParamsError(
+        '"userId" query must be a string and cannot be undefined'
+      )
     }
 
     const books = await this.userRepository.getViewedBooks(userId)
@@ -173,7 +223,10 @@ class BookController {
     if (typeof isbn !== 'string')
       throw new InvalidParamsError('"isbn" query must be a string')
 
-    const reviewValue = await this.userRepository.getReviewFromUser(userId, isbn)
+    const reviewValue = await this.userRepository.getReviewFromUser(
+      userId,
+      isbn
+    )
     res.status(200).json({ review: reviewValue })
   }
 
@@ -183,7 +236,11 @@ class BookController {
     if (typeof userId !== 'string')
       throw new InvalidParamsError('"userId" query must be a string')
 
-    const algorythm = await Algorythm.execute(userId, this.userRepository, this.reviewRepository)
+    const algorythm = await Algorythm.execute(
+      userId,
+      this.userRepository,
+      this.reviewRepository
+    )
     res.status(200).json({ result: algorythm })
   }
 }
