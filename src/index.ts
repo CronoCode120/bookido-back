@@ -13,7 +13,6 @@ import {
   readBookFile,
   books
 } from './dbAddingBooks.js'
-import { read } from 'fs'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -36,6 +35,7 @@ app.use(express.json())
 
 app.get('/books', bookController.getBooks)
 app.get('/books/description', bookController.getDescriptionByISBN)
+app.get('/books/title', bookController.getBooksByTitle)
 
 app.post('/books/table', bookController.addToTable)
 app.get('/books/table', bookController.getBooksInTable)
