@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore'
 import { app } from '../firebase.js'
 import UserRepository from './UserRepository.js'
-import { Rating } from '../../types.js'
+import { Rating, Genre } from '../../types.js'
 
 class UserRepositoryFirebase implements UserRepository {
   db: Firestore
@@ -173,6 +173,15 @@ class UserRepositoryFirebase implements UserRepository {
       return data.value
     } else {
       return null
+    }
+  }
+
+  assignGenres = async (userId: string, genres: Genre[]) => {
+    if (genres.length == 3) {
+      const docRef = doc(this.db, this.collection, userId)
+      await setDoc(docRef, { genres }, { merge: true })
+    } else {
+      throw new Error('Genres not equal to 3')
     }
   }
 }
