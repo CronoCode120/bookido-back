@@ -1,8 +1,7 @@
-import { limit } from 'firebase/firestore'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 
-import path, { dirname } from 'node:path'
+import path from 'node:path'
 import fs from 'node:fs'
 import { fileURLToPath } from 'url'
 
@@ -95,7 +94,7 @@ function filterIsbn(books: any[]) {
   const isbns: string[] = []
   books.length &&
     books.forEach(({ editions }) => {
-      editions.docs.forEach(({ isbn }) => {
+      editions.docs.forEach(({ isbn }: { isbn: string }) => {
         if (!isbn) return
         const isbn13 = isbn[0]
         isbn13.match(regex) && isbns.push(isbn13)

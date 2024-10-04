@@ -39,12 +39,15 @@ class OpenLibraryBookRepository extends BookRepository {
       'fields',
       'editions,key,editions.title,editions.publisher,editions.isbn'
     )
-    url.searchParams.set('limit', '10')
 
     const res = await fetch(url)
     const data = await res.json()
 
-    return getEditionData(data.docs)
+    const books = getEditionData(data.docs)
+    return books.filter(
+      (book: { [key: string]: any }) =>
+        book.hasOwnProperty('isbn') && book.isbn.length > 0
+    )
   }
 
   getBookByISBN = async (isbn: string, fields: string | undefined) => {
