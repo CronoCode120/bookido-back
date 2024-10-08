@@ -7,12 +7,6 @@ import OpenLibraryBookRepository from './repositories/book/OpenLibraryBookReposi
 import AuthFirebase from './models/AuthFirebase.js'
 import UserRepositoryFirebase from './repositories/user/UserRepositoryFirebase.js'
 import ReviewRepositoryFirebase from './repositories/review/ReviewRepositoryFirebase.js'
-import {
-  addingBooks,
-  deleteTable,
-  readBookFile,
-  books
-} from './dbAddingBooks.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -58,11 +52,6 @@ app.get('/reviewFromBook', reviewController.getReviewFromBook)
 app.get('/reviewFromUser', bookController.getReviewFromUser)
 
 app.get('/algorythm', bookController.algorythm)
-
-app.post('/db', addingBooks)
-app.delete('/db', deleteTable)
-app.get('/db', books)
-app.get('/csv', readBookFile)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

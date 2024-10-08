@@ -14,12 +14,13 @@ class UserController {
 
   register = async (req: Request, res: Response) => {
     try {
-      const { username, email, password } = req.body
+      const { username, email, password, genres } = req.body
       const user = User.create({ username, email, password })
 
       const userId = await this.auth.createUser(user.email, user.password)
 
       await this.repository.create(userId, user.email, user.username)
+      await this.repository.assignGenres(userId, genres)
 
       res.status(201).json({ userId })
     } catch (error) {
