@@ -1,4 +1,5 @@
 import BookRepository from './BookRepository.js'
+import filterRepeatedEditions from '../../utils/filterRepeatedEditions.js'
 
 class GoogleBookRepository extends BookRepository {
   apiUrl = 'https://www.googleapis.com/books/v1/volumes'
@@ -24,18 +25,18 @@ class GoogleBookRepository extends BookRepository {
     const url = new URL(this.apiUrl)
     url.searchParams.set('q', 'intitle:' + title.replaceAll(' ', '+'))
     url.searchParams.set('fields', 'items/id')
+    url.searchParams.set('orderBy', 'newest')
 
     const res = await fetch(url)
     const data = await res.json()
 
     const foundIds: string[] = data.items.map(({ id }: { id: string }) => id)
-    console.log('ids: ', foundIds)
 
     const getBooksAsync = foundIds.map(id =>
       this.getBookById(id, 'title,publisher,industryIdentifiers')
     )
 
-    return await Promise.all(getBooksAsync)
+    return filterRepeatedEditions(await Promise.all(getBooksAsync))
   }
 
   getBookById = async (id: string, fields: string) => {
