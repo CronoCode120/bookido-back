@@ -29,9 +29,10 @@ class GoogleBookRepository extends BookRepository {
     const data = await res.json()
 
     const foundIds: string[] = data.items.map(({ id }: { id: string }) => id)
+    console.log('ids: ', foundIds)
 
     const getBooksAsync = foundIds.map(id =>
-      this.getBookById(id, 'title,publisher,industryIdentifier')
+      this.getBookById(id, 'title,publisher,industryIdentifiers')
     )
 
     return await Promise.all(getBooksAsync)
@@ -46,7 +47,13 @@ class GoogleBookRepository extends BookRepository {
     const res = await fetch(url)
     const data = await res.json()
 
-    return { ...data.volumeInfo }
+    const { industryIdentifiers, ...info } = data.volumeInfo
+    const isbn = industryIdentifiers?.find(
+      ({ type }: { type: string }) => type === 'ISBN_13'
+    )
+
+    if (isbn) return { ...info, isbn: isbn.identifier }
+    else return { ...info }
   }
 
   getBookByISBN = async (isbn: string) => {
