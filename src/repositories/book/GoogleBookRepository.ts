@@ -35,7 +35,8 @@ class GoogleBookRepository extends BookRepository {
       this.getBookById(id, 'title,publisher,industryIdentifiers')
     )
 
-    return filterRepeatedEditions(await Promise.all(getBooksAsync))
+    const books = filterRepeatedEditions(await Promise.all(getBooksAsync))
+    return books.filter(book => book.hasOwnProperty('isbn'))
   }
 
   getBookById = async (id: string, fields: string) => {
@@ -70,7 +71,6 @@ class GoogleBookRepository extends BookRepository {
 
     const res = await fetch(url)
     const data = await res.json()
-    console.log(data)
 
     const { imageLinks, ...info } = data.items[0].volumeInfo
     if (!imageLinks) return { ...info }
