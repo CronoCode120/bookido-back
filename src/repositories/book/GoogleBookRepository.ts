@@ -64,13 +64,27 @@ class GoogleBookRepository extends BookRepository {
       .join(',')
     const url = new URL(this.apiUrl)
     url.searchParams.set('q', `isbn:${isbn}`)
-    url.searchParams.set('fields', `items/volumeInfo(${checkedFields})`)
+    url.searchParams.set(
+      'fields',
+      `items/volumeInfo(${checkedFields + ',imageLinks'})`
+    )
 
     const res = await fetch(url)
     const data = await res.json()
     console.log(data)
 
-    return data.items[0].volumeInfo
+    const { imageLinks, ...info } = data.items[0].volumeInfo
+    if (!imageLinks) return { ...info }
+
+    const cover =
+      imageLinks['medium'] ??
+      imageLinks['large'] ??
+      imageLinks['extraLarge'] ??
+      imageLinks['small'] ??
+      imageLinks['thumbnail'] ??
+      imageLinks['smallThumbnail']
+
+    return { cover, ...info }
   }
 
   getDescriptionByISBN = async (isbn: string) => {
