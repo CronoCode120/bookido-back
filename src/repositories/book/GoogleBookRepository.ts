@@ -25,7 +25,6 @@ class GoogleBookRepository extends BookRepository {
     const url = new URL(this.apiUrl)
     url.searchParams.set('q', 'intitle:' + title.replaceAll(' ', '+'))
     url.searchParams.set('fields', 'items/id')
-    url.searchParams.set('orderBy', 'newest')
 
     const res = await fetch(url)
     const data = await res.json()
