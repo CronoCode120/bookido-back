@@ -7,12 +7,13 @@ import OpenLibraryBookRepository from './repositories/book/OpenLibraryBookReposi
 import AuthFirebase from './models/AuthFirebase.js'
 import UserRepositoryFirebase from './repositories/user/UserRepositoryFirebase.js'
 import ReviewRepositoryFirebase from './repositories/review/ReviewRepositoryFirebase.js'
+import GoogleBookRepository from './repositories/book/GoogleBookRepository.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
 
 const bookController = new BookController(
-  new OpenLibraryBookRepository(),
+  new GoogleBookRepository(),
   new UserRepositoryFirebase(),
   new ReviewRepositoryFirebase()
 )
