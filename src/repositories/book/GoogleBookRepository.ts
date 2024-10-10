@@ -4,7 +4,7 @@ class GoogleBookRepository extends BookRepository {
   apiUrl = 'https://www.googleapis.com/books/v1/volumes'
   resFields = [
     'items/id',
-    'items/volumeInfo(title,categories,publisher,language,description)'
+    'items/volumeInfo(title,publisher,industryIdentifiers)'
   ]
 
   getBooksByPublisher = async (page: string = '1', publisher: string) => {
@@ -18,6 +18,35 @@ class GoogleBookRepository extends BookRepository {
     const data = await res.json()
 
     return data
+  }
+
+  getBooksByTitle = async (title: string) => {
+    const url = new URL(this.apiUrl)
+    url.searchParams.set('q', 'intitle:' + title.replaceAll(' ', '+'))
+    url.searchParams.set('fields', 'items/id')
+
+    const res = await fetch(url)
+    const data = await res.json()
+
+    const foundIds: string[] = data.items.map(({ id }: { id: string }) => id)
+
+    const getBooksAsync = foundIds.map(id =>
+      this.getBookById(id, 'title,publisher,industryIdentifier')
+    )
+
+    return await Promise.all(getBooksAsync)
+  }
+
+  getBookById = async (id: string, fields: string) => {
+    const url = new URL(this.apiUrl + '/' + id)
+    if (fields) {
+      url.searchParams.set('fields', `volumeInfo(${fields})`)
+    }
+
+    const res = await fetch(url)
+    const data = await res.json()
+
+    return { ...data.volumeInfo }
   }
 
   getBookByISBN = async (isbn: string) => {
