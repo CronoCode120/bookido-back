@@ -35,7 +35,7 @@ class OpenLibraryBookRepository extends BookRepository {
 
   getBooksByTitle = async (title: string) => {
     const url = new URL(this.apiUrl)
-    url.searchParams.set('q', title)
+    url.searchParams.set('q', title.replaceAll(' ', '+'))
     url.searchParams.set(
       'fields',
       'editions,key,editions.title,editions.publisher,editions.isbn'
