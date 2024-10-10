@@ -58,12 +58,14 @@ class GoogleBookRepository extends BookRepository {
   }
 
   getBookByISBN = async (isbn: string, fields: string) => {
+    console.log(isbn, fields)
     const url = new URL(this.apiUrl)
     url.searchParams.set('q', `isbn:${isbn}`)
     url.searchParams.set('fields', `items/volumeInfo(${fields})`)
 
     const res = await fetch(url)
     const data = await res.json()
+    console.log(data)
 
     return data.items[0].volumeInfo
   }
