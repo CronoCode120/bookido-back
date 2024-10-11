@@ -1,9 +1,7 @@
 import ReviewRepository from '../repositories/review/ReviewRepositoryFirebase.js'
 import UserRepository from '../repositories/user/UserRepositoryFirebase.js'
-import { DocumentData } from 'firebase/firestore'
 import groupBy from '../utils/groupBy.js'
 import { Rating } from '../types.js'
-import { rmSync } from 'fs'
 
 interface BookPoints {
   isbn: string

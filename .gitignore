@@ -2,7 +2,6 @@ node_modules
 *.env
 *.http
 
-*.sqlite
 *.csv
 *.txt
 src/dbAddingBooks.ts
