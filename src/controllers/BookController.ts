@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import BookRepository from '../repositories/book/OpenLibraryBookRepository.js'
+import BookRepository from '../repositories/book/BookRepository.js'
 import UserRepository from '../repositories/user/UserRepositoryFirebase.js'
 import InvalidParamsError from '../errors/InvalidParams.js'
 import Algorythm from '../models/Algorythm.js'

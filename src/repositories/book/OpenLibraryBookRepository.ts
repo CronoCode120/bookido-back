@@ -1,6 +1,7 @@
 import BookRepository from './BookRepository.js'
 import getEditionData from '../../utils/getEditionData.js'
 import filterByIsbn from '../../utils/filterByIsbn.js'
+import filterRepeatedEditions from '../../utils/filterRepeatedEditions.js'
 
 class OpenLibraryBookRepository extends BookRepository {
   apiUrl = 'https://openlibrary.org/search.json'
@@ -34,20 +35,22 @@ class OpenLibraryBookRepository extends BookRepository {
 
   getBooksByTitle = async (title: string) => {
     const url = new URL(this.apiUrl)
-    url.searchParams.set('title', title)
+    url.searchParams.set('q', title.replaceAll(' ', '+'))
     url.searchParams.set(
       'fields',
       'editions,key,editions.title,editions.publisher,editions.isbn'
     )
+    url.searchParams.set('sort', 'new')
 
     const res = await fetch(url)
     const data = await res.json()
 
     const books = getEditionData(data.docs)
-    return books.filter(
+    const booksWithISBN = books.filter(
       (book: { [key: string]: any }) =>
         book.hasOwnProperty('isbn') && book.isbn.length > 0
     )
+    return filterRepeatedEditions(booksWithISBN)
   }
 
   getBookByISBN = async (isbn: string, fields: string | undefined) => {
