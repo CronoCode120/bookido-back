@@ -8,6 +8,7 @@ import AuthFirebase from './models/AuthFirebase.js'
 import UserRepositoryFirebase from './repositories/user/UserRepositoryFirebase.js'
 import ReviewRepositoryFirebase from './repositories/review/ReviewRepositoryFirebase.js'
 import GoogleBookRepository from './repositories/book/GoogleBookRepository.js'
+import SqliteBookRepository from './repositories/book/SqliteBookRepository.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -15,7 +16,8 @@ const PORT = process.env.PORT ?? 3000
 const bookController = new BookController(
   new GoogleBookRepository(),
   new UserRepositoryFirebase(),
-  new ReviewRepositoryFirebase()
+  new ReviewRepositoryFirebase(),
+  new SqliteBookRepository()
 )
 const userController = new UserController(
   new AuthFirebase(),

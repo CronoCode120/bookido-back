@@ -4,38 +4,84 @@ import UserRepository from '../repositories/user/UserRepositoryFirebase.js'
 import InvalidParamsError from '../errors/InvalidParams.js'
 import Algorythm from '../models/Algorythm.js'
 import ReviewRepository from '../repositories/review/ReviewRepositoryFirebase.js'
+import SqliteBookRepository from '../repositories/book/SqliteBookRepository.js'
+import { log } from 'console'
 
 class BookController {
   readonly repository
   readonly userRepository
   readonly reviewRepository
+  readonly sqliteBookRepository
 
   constructor(
     bookRepository: BookRepository,
     userRepository: UserRepository,
-    reviewRepository: ReviewRepository
+    reviewRepository: ReviewRepository,
+    sqliteBookRepository: SqliteBookRepository
   ) {
     this.repository = bookRepository
     this.userRepository = userRepository
     this.reviewRepository = reviewRepository
+    this.sqliteBookRepository = sqliteBookRepository
   }
 
   getBooks = async (req: Request, res: Response) => {
     const { page, userId } = req.query
+    const limit = 20
     if (page && typeof page !== 'string')
       throw new InvalidParamsError('"page" query must be a string')
 
     if (typeof userId !== 'string')
       throw new InvalidParamsError('"userId" query must be a string')
 
-    const isbns = await this.userRepository.getViewedBooks(userId)
+    const algorythm = await Algorythm.execute(
+      userId,
+      this.userRepository,
+      this.reviewRepository
+    )
 
-    const books = await this.repository.getBooksByPublisher(
+    let isbns =
+      algorythm.length !== 0
+        ? algorythm
+        : await this.sqliteBookRepository.getBooks(Number(page), limit)
+
+    const viewed = await this.userRepository.getViewedBooks(userId)
+
+    let currentPage = Number(page)
+    while (isbns.length < limit) {
+      currentPage++
+
+      const additionalBooks = await this.sqliteBookRepository.getBooks(
+        currentPage,
+        limit
+      )
+
+      const newBooks = additionalBooks
+        .filter(({ isbn }) => !isbns.includes(isbn))
+        .map(({ isbn }) => isbn)
+
+      if (newBooks.length === 0) break
+
+      newBooks.filter(isbn => {
+        !viewed.includes(isbn)
+      })
+
+      if (newBooks.length >= limit) {
+        const lastPos = newBooks.length - isbns.length
+        newBooks.splice(lastPos, isbns.length)
+      }
+
+      isbns = [...isbns, ...newBooks]
+    }
+    //const isbns = await this.userRepository.getViewedBooks(userId)
+
+    /*const books = await this.repository.getBooksByPublisher(
       page,
       'alpha decay',
       isbns
-    )
-    res.status(200).json({ books })
+    )*/
+
+    res.status(200).json({ isbns })
   }
 
   getBookByISBN = async (req: Request, res: Response) => {
