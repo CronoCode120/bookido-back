@@ -64,15 +64,17 @@ class GoogleBookRepository extends BookRepository {
       .join(',')
     const url = new URL(this.apiUrl)
     url.searchParams.set('q', `isbn:${isbn}`)
-    url.searchParams.set(
-      'fields',
-      `items/volumeInfo(${checkedFields + ',imageLinks'})`
-    )
+    url.searchParams.set('fields', `items/id`)
 
     const res = await fetch(url)
     const data = await res.json()
 
-    const { imageLinks, ...info } = data.items[0].volumeInfo
+    const { id } = data.items[0]
+
+    const { imageLinks, ...info } = await this.getBookById(
+      id,
+      checkedFields + ',imageLinks'
+    )
     if (!imageLinks) return { ...info }
 
     const cover =
