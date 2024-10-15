@@ -5,7 +5,6 @@ import InvalidParamsError from '../errors/InvalidParams.js'
 import Algorythm from '../models/Algorythm.js'
 import ReviewRepository from '../repositories/review/ReviewRepositoryFirebase.js'
 import SqliteBookRepository from '../repositories/book/SqliteBookRepository.js'
-import { log } from 'console'
 
 class BookController {
   readonly repository
@@ -81,7 +80,15 @@ class BookController {
       isbns
     )*/
 
-    res.status(200).json({ isbns })
+    const getBooksDataAsync = isbns.map(isbn =>
+      this.repository
+        .getBookByISBN(isbn, 'title,author,publisher,description')
+        .then(book => ({ ...book, isbn }))
+    )
+    const booksData = await Promise.all(getBooksDataAsync)
+    const books = booksData.filter(book => book !== null)
+
+    res.status(200).json({ books })
   }
 
   getBookByISBN = async (req: Request, res: Response) => {
