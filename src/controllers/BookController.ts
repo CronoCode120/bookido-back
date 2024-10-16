@@ -46,7 +46,16 @@ class BookController {
 
     const viewed = await this.userRepository.getViewedBooks(userId)
 
+    if (isbns.length > 0)
+      isbns = isbns
+        .map(({ isbn }) => isbn)
+        .filter(isbn => !viewed.includes(isbn))
+        .filter(
+          async isbn => (await this.repository.getBookByISBN(isbn)) !== null
+        )
+
     let currentPage = Number(page)
+
     while (isbns.length < limit) {
       currentPage++
 
@@ -55,13 +64,13 @@ class BookController {
         limit
       )
 
-      const newBooks = additionalBooks
+      let newBooks = additionalBooks
         .filter(({ isbn }) => !isbns.includes(isbn))
         .map(({ isbn }) => isbn)
 
       if (newBooks.length === 0) break
 
-      newBooks.filter(isbn => !viewed.includes(isbn))
+      newBooks = newBooks.filter(isbn => !viewed.includes(isbn))
 
       if (newBooks.length >= limit) {
         const lastPos = newBooks.length - isbns.length
@@ -78,10 +87,10 @@ class BookController {
       isbns
     )*/
 
+    //const filteredIsbns = isbns.filter(({isbn}) => )
+
     const getBooksDataAsync = isbns.map(isbn =>
-      this.repository
-        .getBookByISBN(isbn, 'title,author,publisher,description')
-        .then(book => ({ ...book, isbn }))
+      this.repository.getBookByISBN(isbn, 'title,author,publisher,description')
     )
     const booksData = await Promise.all(getBooksDataAsync)
     const books = booksData.filter(book => book !== null)
