@@ -77,7 +77,7 @@ class GoogleBookRepository extends BookRepository {
       id,
       checkedFields + ',imageLinks'
     )
-    if (!imageLinks) return { ...info }
+    if (!imageLinks) return null
 
     const cover =
       imageLinks['medium'] ??
