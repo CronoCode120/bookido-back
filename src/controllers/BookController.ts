@@ -61,9 +61,7 @@ class BookController {
 
       if (newBooks.length === 0) break
 
-      newBooks.filter(isbn => {
-        !viewed.includes(isbn)
-      })
+      newBooks.filter(isbn => !viewed.includes(isbn))
 
       if (newBooks.length >= limit) {
         const lastPos = newBooks.length - isbns.length
