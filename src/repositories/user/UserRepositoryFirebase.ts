@@ -6,7 +6,8 @@ import {
   getDocs,
   collection,
   deleteDoc,
-  getDoc
+  getDoc,
+  updateDoc
 } from 'firebase/firestore'
 import { app } from '../firebase.js'
 import UserRepository from './UserRepository.js'
@@ -177,11 +178,42 @@ class UserRepositoryFirebase implements UserRepository {
   }
 
   assignGenres = async (userId: string, genres: Genre[]) => {
-    if (genres.length == 3) {
-      const docRef = doc(this.db, this.collection, userId)
-      await setDoc(docRef, { genres }, { merge: true })
-    } else {
-      throw new Error('Genres not equal to 3')
+    const docRef = doc(this.db, this.collection, userId)
+    await setDoc(docRef, { genres }, { merge: true })
+  }
+
+  updateUserEmailInFirestore = async (userId: string, newEmail: string) => {
+    const userDocRef = doc(this.db, 'users', userId)
+    try {
+      await updateDoc(userDocRef, {
+        email: newEmail
+      })
+    } catch (error) {
+      return error
+    }
+  }
+
+  updateUsername = async (userId: string, newUsername: string) => {
+    const userDocRef = doc(this.db, 'users', userId)
+    try {
+      await updateDoc(userDocRef, {
+        username: newUsername
+      })
+    } catch (error) {
+      return error
+    }
+  }
+
+  getGenres = async (userId: string) => {
+    const docRef = doc(this.db, this.collection, userId)
+    try {
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        const data = docSnap.data()
+        return data.genres || []
+      }
+    } catch (error) {
+      return 'err'
     }
   }
 }
