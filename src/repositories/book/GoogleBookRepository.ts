@@ -48,7 +48,7 @@ class GoogleBookRepository extends BookRepository {
     const res = await fetch(url)
     const data = await res.json()
 
-    if (data.volumeInfo) return null
+    if (!data.volumeInfo) return null
 
     const { industryIdentifiers, ...info } = data.volumeInfo
     const isbn = industryIdentifiers?.find(
