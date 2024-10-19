@@ -48,6 +48,8 @@ class GoogleBookRepository extends BookRepository {
     const res = await fetch(url)
     const data = await res.json()
 
+    if (data.volumeInfo) return null
+
     const { industryIdentifiers, ...info } = data.volumeInfo
     const isbn = industryIdentifiers?.find(
       ({ type }: { type: string }) => type === 'ISBN_13'
@@ -73,10 +75,9 @@ class GoogleBookRepository extends BookRepository {
 
     const { id } = data.items[0]
 
-    const { imageLinks, ...info } = await this.getBookById(
-      id,
-      checkedFields + ',imageLinks'
-    )
+    const bookData = await this.getBookById(id, checkedFields + ',imageLinks')
+    if (bookData === null) return null
+    const { imageLinks, ...info } = bookData
     if (!imageLinks) return { ...info }
 
     const cover =
