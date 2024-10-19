@@ -59,11 +59,13 @@ class GoogleBookRepository extends BookRepository {
     else return { ...info }
   }
 
-  getBookByISBN = async (isbn: string, fields: string) => {
+  getBookByISBN = async (isbn: string, fields?: string) => {
     const checkedFields = fields
-      .split(',')
-      .map(field => (field === 'author' ? 'authors' : field))
-      .join(',')
+      ? fields
+          .split(',')
+          .map(field => (field === 'author' ? 'authors' : field))
+          .join(',')
+      : ''
     const url = new URL(this.apiUrl)
     url.searchParams.set('q', `isbn:${isbn}`)
     url.searchParams.set('fields', `items/id`)
@@ -75,10 +77,13 @@ class GoogleBookRepository extends BookRepository {
 
     const { id } = data.items[0]
 
-    const bookData = await this.getBookById(id, checkedFields + ',imageLinks')
+    const bookData = await this.getBookById(
+      id,
+      checkedFields !== '' ? checkedFields + ',imageLinks' : 'imageLinks'
+    )
     if (bookData === null) return null
     const { imageLinks, ...info } = bookData
-    if (!imageLinks) return { ...info }
+    if (!imageLinks) return null
 
     const cover =
       imageLinks['medium'] ??
@@ -88,7 +93,7 @@ class GoogleBookRepository extends BookRepository {
       imageLinks['thumbnail'] ??
       imageLinks['smallThumbnail']
 
-    return { cover, ...info }
+    return { cover, ...info, isbn }
   }
 
   getDescriptionByISBN = async (isbn: string) => {

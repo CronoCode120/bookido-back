@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import UserRepository from '../repositories/user/UserRepository.js'
 import User from '../models/User.js'
 import AuthUser from '../models/Auth.js'
+import validateNewPasswords from '../utils/comparePasswd.js'
+import InvalidParamsError from '../errors/InvalidParams.js'
 
 class UserController {
   readonly auth
@@ -15,14 +17,18 @@ class UserController {
   register = async (req: Request, res: Response) => {
     try {
       const { username, email, password, genres } = req.body
-      const user = User.create({ username, email, password })
+      if (genres.length > 3) {
+        const user = User.create({ username, email, password })
 
-      const userId = await this.auth.createUser(user.email, user.password)
+        const userId = await this.auth.createUser(user.email, user.password)
 
-      await this.repository.create(userId, user.email, user.username)
-      await this.repository.assignGenres(userId, genres)
+        await this.repository.create(userId, user.email, user.username)
+        await this.repository.assignGenres(userId, genres)
 
-      res.status(201).json({ userId })
+        res.status(201).json({ userId })
+      } else {
+        res.status(400).json({ error: 'Genres inferior to 3' })
+      }
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ error: error.message })
@@ -40,6 +46,54 @@ class UserController {
     } else {
       res.status(400).json({ error: 'Invalid email or password' })
     }
+  }
+
+  updateEmail = async (req: Request, res: Response) => {
+    const { userId, newEmail } = req.body
+    const result = await this.auth.updateEmail(newEmail)
+    if (result) res.status(400).json({ result })
+    else {
+      const newEmailOnFirestore =
+        await this.repository.updateUserEmailInFirestore(userId, newEmail)
+      if (newEmailOnFirestore)
+        res.status(400).json({ error: newEmailOnFirestore })
+    }
+  }
+
+  updateUsername = async (req: Request, res: Response) => {
+    const { userId, newUsername } = req.body
+    const result = await this.repository.updateUsername(userId, newUsername)
+    if (result) res.status(400).json({ error: result })
+  }
+
+  updatePasswd = async (req: Request, res: Response) => {
+    const { currentPasswd, newPasswd, repeatPasswd } = req.body
+    if (!validateNewPasswords(newPasswd, repeatPasswd)) {
+      res.status(400).json({ error: 'passwds do not match' })
+      return
+    }
+    const reauthenticated = await this.auth.reauthenticateUser(currentPasswd)
+    reauthenticated
+      ? await this.auth.changeUserPassword(newPasswd)
+      : res.status(400).json({ error: 'not logged in or cannot update passwd' })
+  }
+
+  updateGenres = async (req: Request, res: Response) => {
+    const { userId, genres } = req.body
+    if (genres.length >= 3) {
+      await this.repository.assignGenres(userId, genres)
+      res.status(201).json({ res: 'genres updated' })
+    } else {
+      res.status(400).json({ error: 'not enough genres' })
+    }
+  }
+
+  getGenres = async (req: Request, res: Response) => {
+    const { userId } = req.query
+    if (typeof userId !== 'string')
+      throw new InvalidParamsError('"userId" query must be a string')
+    const genres = await this.repository.getGenres(userId)
+    res.status(201).json({ genres })
   }
 }
 

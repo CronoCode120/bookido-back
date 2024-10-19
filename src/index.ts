@@ -48,6 +48,11 @@ app.get('/books/:isbn', bookController.getBookByISBN)
 
 app.post('/users', userController.register)
 app.post('/users/login', userController.login)
+app.post('/users/updateEmail', userController.updateEmail)
+app.post('/users/updateUsername', userController.updateUsername)
+app.post('/users/updatePasswd', userController.updatePasswd)
+app.post('/users/updateGenres', userController.updateGenres)
+app.get('/genres', userController.getGenres)
 
 app.get('/reviews', reviewController.getReviews)
 app.post('/review', reviewController.addReview)

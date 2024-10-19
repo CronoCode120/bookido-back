@@ -2,6 +2,7 @@ import ReviewRepository from '../repositories/review/ReviewRepositoryFirebase.js
 import UserRepository from '../repositories/user/UserRepositoryFirebase.js'
 import groupBy from '../utils/groupBy.js'
 import { Rating } from '../types.js'
+import { string } from 'zod'
 
 interface BookPoints {
   isbn: string
@@ -98,11 +99,13 @@ class Algorythm {
   getUsersShelfs = async (orderedUsers: any[], userId: string) => {
     const currentUserShelf = await this.userRepository.getBooksInShelf(userId)
     const currentUserBookIds = new Set(currentUserShelf)
+    const viewedBooks = await this.userRepository.getViewedBooks(userId)
 
     const usersShelfsAsync = orderedUsers.map(async rankedUser => {
       const shelf = await this.userRepository.getBooksInShelf(rankedUser.userId)
       const filteredShelf = shelf.filter(
-        (isbn: string) => !currentUserBookIds.has(isbn)
+        (isbn: string) =>
+          !currentUserBookIds.has(isbn) && !viewedBooks.includes(isbn)
       )
       return { ...rankedUser, shelf: filteredShelf }
     })
