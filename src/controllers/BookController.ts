@@ -79,15 +79,6 @@ class BookController {
 
       isbns = [...isbns, ...newBooks]
     }
-    //const isbns = await this.userRepository.getViewedBooks(userId)
-
-    /*const books = await this.repository.getBooksByPublisher(
-      page,
-      'alpha decay',
-      isbns
-    )*/
-
-    //const filteredIsbns = isbns.filter(({isbn}) => )
 
     const getBooksDataAsync = isbns.map(isbn =>
       this.repository.getBookByISBN(isbn, 'title,author,publisher,description')
