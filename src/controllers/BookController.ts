@@ -51,7 +51,9 @@ class BookController {
         .map(({ isbn }) => isbn)
         .filter(isbn => !viewed.includes(isbn))
         .filter(
-          async isbn => (await this.repository.getBookByISBN(isbn)) !== null
+          async isbn =>
+            (await this.repository.getBookByISBN(isbn, undefined, true)) !==
+            null
         )
 
     let currentPage = Number(page)
@@ -81,7 +83,11 @@ class BookController {
     }
 
     const getBooksDataAsync = isbns.map(isbn =>
-      this.repository.getBookByISBN(isbn, 'title,author,publisher,description')
+      this.repository.getBookByISBN(
+        isbn,
+        'title,author,publisher,description',
+        true
+      )
     )
     const booksData = await Promise.all(getBooksDataAsync)
     const books = booksData.filter(book => book !== null)

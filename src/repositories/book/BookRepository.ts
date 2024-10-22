@@ -12,7 +12,8 @@ abstract class BookRepository implements BookRepository {
 
   abstract getBookByISBN(
     isbn: string,
-    fields?: string | undefined
+    fields?: string | undefined,
+    coverOnly?: boolean
   ): Promise<any>
 
   abstract getDescriptionByISBN(isbn: string | undefined): Promise<string>
