@@ -137,20 +137,12 @@ class UserRepositoryFirebase implements UserRepository {
     userId: string,
     isbn: string,
     value: Rating,
-    review: string
+    review: string | undefined
   ) => {
-    if (review.length <= 5) {
-      const collectionRef = collection(
-        this.db,
-        this.collection,
-        userId,
-        'shelve'
-      )
-      const docRef = doc(collectionRef, isbn)
-      await setDoc(docRef, { value, review })
-    } else {
-      return 'err'
-    }
+    const newReview = review ? { value, review } : { value }
+    const collectionRef = collection(this.db, this.collection, userId, 'shelve')
+    const docRef = doc(collectionRef, isbn)
+    await setDoc(docRef, newReview)
   }
 
   getReviewFromUser = async (userId: string, isbn: string) => {
