@@ -200,6 +200,7 @@ class BookController {
 
     const bookAdded = await this.userRepository.shelve(userId, isbn)
     if (bookAdded != 'err') {
+      await this.userRepository.removeBookInTable(userId, isbn)
       res.status(200).json({ shelve: bookAdded })
     } else {
       res
