@@ -29,6 +29,8 @@ class GoogleBookRepository extends BookRepository {
     const res = await fetch(url)
     const data = await res.json()
 
+    if (!data?.items) return []
+
     const foundIds: string[] = data.items.map(({ id }: { id: string }) => id)
 
     const getBooksAsync = foundIds.map(id =>
