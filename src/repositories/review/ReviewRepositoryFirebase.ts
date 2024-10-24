@@ -5,15 +5,11 @@ import {
   getFirestore,
   getDocs,
   collection,
-  deleteDoc,
-  query,
-  where,
   DocumentData,
   getDoc
 } from 'firebase/firestore'
 import { app } from '../firebase.js'
 import { Rating } from '../../types.js'
-import { userInfo } from 'os'
 
 class ReviewRepositoryFirebase {
   db: Firestore
@@ -28,11 +24,13 @@ class ReviewRepositoryFirebase {
     userId: string,
     isbn: string,
     value: Rating,
-    review: string
+    review: string | undefined
   ) => {
+    const newReview = review ? { value, review } : { value }
+
     const collectionRef = collection(this.db, this.collection, isbn, 'data')
     const docRef = doc(collectionRef, userId)
-    await setDoc(docRef, { value, review })
+    await setDoc(docRef, newReview)
     const collectionRef2 = collection(
       this.db,
       this.collectionUsers,
@@ -40,7 +38,7 @@ class ReviewRepositoryFirebase {
       'shelve'
     )
     const docRef2 = doc(collectionRef2, isbn)
-    await setDoc(docRef2, { value, review })
+    await setDoc(docRef2, newReview)
 
     const reviewsUpdated = await this.getReviews(isbn)
     return reviewsUpdated
