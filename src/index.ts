@@ -53,6 +53,7 @@ app.post('/users/updateUsername', userController.updateUsername)
 app.post('/users/updatePasswd', userController.updatePasswd)
 app.post('/users/updateGenres', userController.updateGenres)
 app.get('/genres', userController.getGenres)
+app.get('/users/:userId', userController.getUser)
 
 app.get('/reviews', reviewController.getReviews)
 app.post('/review', reviewController.addReview)

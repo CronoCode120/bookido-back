@@ -94,6 +94,12 @@ class UserController {
     const genres = await this.repository.getGenres(userId)
     res.status(201).json({ genres })
   }
+
+  getUser = async (req: Request, res: Response) => {
+    const { userId } = req.params
+    const user = await this.repository.getUser(userId)
+    res.status(200).json({ user })
+  }
 }
 
 export default UserController

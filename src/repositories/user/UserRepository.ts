@@ -12,6 +12,7 @@ abstract class UserRepository {
   ): Promise<unknown>
   abstract updateUsername(userId: string, newUsername: string): Promise<unknown>
   abstract getGenres(userId: string): Promise<unknown>
+  abstract getUser(userId: string): Promise<unknown>
 }
 
 export default UserRepository

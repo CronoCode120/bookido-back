@@ -208,6 +208,16 @@ class UserRepositoryFirebase implements UserRepository {
       return 'err'
     }
   }
+
+  getUser = async (userId: string) => {
+    const docRef = doc(this.db, this.collection, userId)
+    const docSnap = await getDoc(docRef)
+    if (docSnap.exists()) {
+      return docSnap.data()
+    } else {
+      return null
+    }
+  }
 }
 
 export default UserRepositoryFirebase
