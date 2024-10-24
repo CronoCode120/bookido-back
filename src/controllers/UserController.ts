@@ -17,18 +17,17 @@ class UserController {
   register = async (req: Request, res: Response) => {
     try {
       const { username, email, password, genres } = req.body
-      if (genres.length > 3) {
-        const user = User.create({ username, email, password })
+      const user = User.create({ username, email, password })
 
-        const userId = await this.auth.createUser(user.email, user.password)
+      const userId = await this.auth.createUser(user.email, user.password)
 
-        await this.repository.create(userId, user.email, user.username)
+      await this.repository.create(userId, user.email, user.username)
+
+      if (genres && genres.length > 3) {
         await this.repository.assignGenres(userId, genres)
-
-        res.status(201).json({ userId })
-      } else {
-        res.status(400).json({ error: 'Genres inferior to 3' })
       }
+
+      res.status(201).json({ userId })
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ error: error.message })
