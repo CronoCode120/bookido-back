@@ -71,7 +71,7 @@ class OpenLibraryBookRepository extends BookRepository {
     const res = await fetch(url)
     const data = await res.json()
 
-    return getEditionData(data.docs)[0]
+    return { isbn, ...getEditionData(data.docs)[0] }
   }
 
   getDescriptionByISBN = async (isbn: string | undefined) => {
