@@ -14,7 +14,7 @@ const app = express()
 const PORT = process.env.PORT ?? 3000
 
 const bookController = new BookController(
-  new GoogleBookRepository(),
+  new OpenLibraryBookRepository(),
   new UserRepositoryFirebase(),
   new ReviewRepositoryFirebase(),
   new SqliteBookRepository()

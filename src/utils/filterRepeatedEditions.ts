@@ -6,7 +6,7 @@ const filterRepeatedEditions = (editions: any[]): any[] => {
     const found = seenEditions.find(
       seen =>
         seen.title.trim() === title &&
-        seen.publisher.toLowerCase() === edition.publisher.toLowerCase()
+        seen.publisher[0].toLowerCase() === edition.publisher[0].toLowerCase()
     )
 
     if (!found) {

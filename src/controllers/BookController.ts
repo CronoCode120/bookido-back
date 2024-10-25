@@ -48,13 +48,13 @@ class BookController {
 
     if (isbns.length > 0)
       isbns = isbns
-        .map(({ isbn }) => isbn)
+        // .map(({ isbn }) => isbn)
         .filter(isbn => !viewed.includes(isbn))
-        .filter(
-          async isbn =>
-            (await this.repository.getBookByISBN(isbn, undefined, true)) !==
-            null
-        )
+    // .filter(
+    //   async isbn =>
+    //     (await this.repository.getBookByISBN(isbn, undefined, true)) !==
+    //     null
+    // )
 
     let currentPage = Number(page)
 
