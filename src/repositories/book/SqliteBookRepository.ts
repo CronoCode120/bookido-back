@@ -20,7 +20,7 @@ class SqliteBookRepository {
         pageSize,
         offset
       )
-      return books
+      return books.map(({ isbn }) => isbn)
     } catch (error) {
       console.error('Error fetching books:', error)
       return []
