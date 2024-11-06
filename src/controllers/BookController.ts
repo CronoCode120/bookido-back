@@ -66,9 +66,7 @@ class BookController {
         limit
       )
 
-      let newBooks = additionalBooks
-        .filter(({ isbn }) => !isbns.includes(isbn))
-        .map(({ isbn }) => isbn)
+      let newBooks = additionalBooks.filter(({ isbn }) => !isbns.includes(isbn))
 
       if (newBooks.length === 0) break
 
